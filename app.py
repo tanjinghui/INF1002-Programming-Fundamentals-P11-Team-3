@@ -53,12 +53,45 @@ def home():
 
 @app.route("/sma", methods = ["GET", "POST"])
 def smaPage():
+    results = None
+    start_date = None
+    end_date = None
+    days_window = None
+    smaGraph = None
+
     if request.method == "POST":
         start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
         end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
         days_window = int(request.form.get("days_window"))
+        results = functions.simple_moving_average(stockData, start_date, end_date, days_window)
+        smaGraph = visualization.plot_smaGraph(results, days_window)
 
-    return render_template("sma.html")
+    return render_template("sma.html", results = results, dayswindow = days_window, stert_date = start_date, end_date = end_date, smaGraph= smaGraph)
+
+@app.route("/trend", methods = ["GET", "POST"])
+def trendPage():
+    results = None
+    start_date = None
+    end_date = None
+    trend_window = None
+    trendGraph = None
+    bullOrBear = None
+    errorMsg = None
+    if request.method == "POST":
+        start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
+        end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
+        if start_date.weekday() < 5 and end_date.weekday() < 5:
+            errorMsg = None
+            print(end_date)
+            trend_window = int(request.form.get("trend_window"))
+            results = functions.trend_finder(stockData, start_date, end_date, trend_window)
+            trendGraph = visualization.plot_updown_trend(results[0], results[1], results[2], results[3], results[4], trend_window)
+            return render_template("trend.html", results = results, trendwindow = trend_window, stert_date = start_date, end_date = end_date, trendGraph= trendGraph, errorMsg=errorMsg, bullOrBear = results[5])
+        else:
+            errorMsg = "Error: Please select a weekday (Mon-Fri) for both start and end date."
+            return render_template("trend.html", results = None, trendwindow = None, stert_date = start_date, end_date = end_date, trendGraph= None, errorMsg=errorMsg)
+    return render_template("trend.html", results = None, trendwindow = None, stert_date = start_date, end_date = end_date, trendGraph= None, errorMsg=None)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
