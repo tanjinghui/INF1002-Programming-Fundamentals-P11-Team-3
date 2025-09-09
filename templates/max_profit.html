@@ -49,9 +49,6 @@
                                     <label for="end_date">End Date:</label>
                                     <input type="date" name="end_date" required>
                                     <br>
-                                    <label for="trend_window">Trend Window (days):</label>
-                                    <input type="number" name="trend_window" min="1" required>
-                                    <br>
                                     <button type="submit">Calculate</button>
                                 </form>
                                 {% if errorMsg %}
@@ -59,8 +56,8 @@
                                 {% endif %}
                             </div>
                             <div class="col-xl-8">
-                                {% if maxProfitGraph %}
-                                    {{ maxProfitGraph | safe}}
+                                {% if max_profit_Graph %}
+                                    {{ max_profit_Graph | safe}}
                                 {% endif %}
                             </div>
                         </div>
