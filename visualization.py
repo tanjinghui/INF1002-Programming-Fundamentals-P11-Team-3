@@ -83,7 +83,7 @@ def plot_max_profit(stockData, results):
     """
     https://plotly.com/python/candlestick-charts
     """
-    datesData = stockData['Dates']
+    datesData = stockData['Date']
     indexStart = datesData.index(results[0])
     indexEnd = datesData.index(results[1])
     datesData = datesData[indexStart:indexEnd]
@@ -116,17 +116,25 @@ def plot_max_profit(stockData, results):
             )
         )
     )
-    fig.add_trace(go.Scatter(x=datesData[indexBuy], y=highData[indexBuy],
-                           mode = 'markers',
-                           marker = dict(color='green',
-                                         symbol = 'Diamond',
-                                         size = 5),
-                           name = 'Buy Day'))
-    fig.add_trace(go.Scatter(x=datesData[indexSell], y=highData[indexSell],
-                           mode = 'markers',
-                           marker = dict(color='red',
-                                         symbol = 'Diamond',
-                                         size = 5),
-                           name = 'Buy Day'))
+    fig.add_trace(go.Scatter(
+        x=[datesData[indexBuy]], 
+        y=[highData[indexBuy]],
+        mode = 'markers',
+        marker = dict(color='green',
+                      symbol = 'diamond',
+                      size = 10),
+                      name = 'Buy Day'
+                      )
+                    )
+    fig.add_trace(go.Scatter(
+        x=[datesData[indexSell]], 
+        y=[highData[indexSell]],
+        mode = 'markers',
+        marker = dict(color='red',
+                      symbol = 'diamond',
+                      size = 10),
+                      name = 'Buy Day'
+                      )
+                    )
     # fig.show()
     return fig.to_html(full_html = False)

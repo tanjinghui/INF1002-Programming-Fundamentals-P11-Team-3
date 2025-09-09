@@ -95,7 +95,7 @@ def max_profit_Page():
         end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
 #        trend_window = int(request.form.get("trend_window"))
         results = functions.max_profit(stockData, start_date, end_date)
-        max_profit_Graph = visualization.plot_max_profit(results)
+        max_profit_Graph = visualization.plot_max_profit(stockData,results)
         return render_template("max_profit.html", results = results, stert_date = start_date, end_date = end_date, max_profit_Graph= max_profit_Graph, errorMsg=results[5])
     return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=None)
 

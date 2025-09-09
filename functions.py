@@ -128,10 +128,9 @@ def max_profit(stockData, start_date, end_date):
     while end_date not in stockData['Date']:
         errorMsg = "Selected closest weekday for end date"
         end_date -= timedelta(days=1)
-        print(f"end_date: {end_date}")
-    print(f"erroMsg: {errorMsg}, start_date: {start_date}, end_date: {end_date}")
     indexStart = dates.index(start_date)
     indexEnd = dates.index(end_date)
+    dates = dates[indexStart : indexEnd]
     priceLow, priceHigh = priceLow[indexStart : indexEnd], priceHigh[indexStart : indexEnd]
     buyDay,sellDay = None, None
 
