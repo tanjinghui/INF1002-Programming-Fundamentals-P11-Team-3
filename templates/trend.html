@@ -14,7 +14,7 @@
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="/">SMA Calculator</a>
+            <a class="navbar-brand ps-3" href="/">Trend Finder</a>
         </nav>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
@@ -25,12 +25,12 @@
                             <a class="nav-link" href="/sma">
                                 Simple Moving Average Calculator
                             </a>
-                            <a class="nav-link" href="index.html">
-                                Dashboard
+                            <a class="nav-link" href="/trend">
+                                Trend Finder
                             </a>
-                            <a class="nav-link" href="index.html">
-                                Dashboard
-                            </a>     
+                            <a class="nav-link" href="/.html">
+                                Home
+                            </a>  
                         </div>
                     </div>
                 </nav>
@@ -38,28 +38,40 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Dashboard</h1>
+                        <h1 class="mt-4">TrendFinder</h1>
                         <div class="row">
                             <div class="col-xl-3">
                                 <form method="POST" class="form-group">
-                                    <h3>Calculate Simple Moving Average</h3>
+                                    <h3>Settings for Trend</h3>
                                     <label for="start_date">Start Date:</label>
                                     <input type="date" name="start_date" required>
                                     <br>
                                     <label for="end_date">End Date:</label>
                                     <input type="date" name="end_date" required>
                                     <br>
-                                    <label for="days_window">SMA Window (days):</label>
-                                    <input type="number" name="days_window" min="1" required>
+                                    <label for="trend_window">Trend Window (days):</label>
+                                    <input type="number" name="trend_window" min="1" required>
                                     <br>
                                     <button type="submit">Calculate</button>
                                 </form>
-                            </div>
-                            <div>
-                                {% if smaGraph %}
-                                    {{ smaGraph | safe}}
+                                {% if errorMsg %}
+                                    {{ errorMsg | safe}}
                                 {% endif %}
                             </div>
+                            <div class="col-xl-8">
+                                {% if trendGraph %}
+                                    {{ trendGraph | safe}}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row" align="center", padding-top="20px", padding-bottom="20px">
+                                {% if bullOrBear %}
+                                    <h3 style="background-color:green;;">The trend indicates a Bull Market.</h3>
+                                {% elif bullOrBear == False %}
+                                    <h3 style="background-color:red;">The trend indicates a Bear Market.</h3>
+                                {% elif bullOrBear == None and results %}
+                                    <h3 style="background-color:orange;">The trend is Neutral.</h3>
+                                {% endif %}
                         </div>
                     </div>
                     </div>

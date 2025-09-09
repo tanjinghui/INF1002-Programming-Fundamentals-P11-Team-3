@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from datetime import datetime
+from datetime import datetime,timedelta
 import csv
 import functions
 import visualization
@@ -53,12 +53,37 @@ def home():
 
 @app.route("/sma", methods = ["GET", "POST"])
 def smaPage():
+    results = None
+    start_date = None
+    end_date = None
+    days_window = None
+    smaGraph = None
+
     if request.method == "POST":
         start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
         end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
         days_window = int(request.form.get("days_window"))
+        results = functions.simple_moving_average(stockData, start_date, end_date, days_window)
+        smaGraph = visualization.plot_smaGraph(results, days_window)
 
-    return render_template("sma.html")
+    return render_template("sma.html", results = results, dayswindow = days_window, stert_date = start_date, end_date = end_date, smaGraph= smaGraph)
+
+@app.route("/trend", methods = ["GET", "POST"])
+def trendPage():
+    results = None
+    start_date = None
+    end_date = None
+    trend_window = None
+    trendGraph = None
+    if request.method == "POST":
+        start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
+        end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
+        trend_window = int(request.form.get("trend_window"))
+        results = functions.trend_finder(stockData, start_date, end_date, trend_window)
+        trendGraph = visualization.plot_updown_trend(results)
+        return render_template("trend.html", results = results, trendwindow = trend_window, stert_date = start_date, end_date = end_date, trendGraph= trendGraph, errorMsg=results[6], bullOrBear = results[7])
+    return render_template("trend.html", results = None, trendwindow = None, stert_date = start_date, end_date = end_date, trendGraph= None, errorMsg=None, bullOrBear = None)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
