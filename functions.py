@@ -56,6 +56,7 @@ def trend_finder(stockData, start_date, end_date, sample_days):
 
     reference:
     https://www.geeksforgeeks.org/python/python-program-to-get-total-business-days-between-two-dates
+    https://stackoverflow.com/questions/65012886/plotly-how-to-calculate-and-illustrate-the-upper-and-lower-50-of-a-trend-line
     """
     
     dates = [i for i in stockData["Date"]]
@@ -105,7 +106,12 @@ def max_profit(stockData, start_date, end_date):
     (list) stock_price: list of stock prices)
 
     return values:
+    (datetiume) start_date: start date for calculation
+    (datetiume) end_date: end date for calculation
     (int) max_profit_amt: maximum profit amount
+    (datetime) buyDay: which day the stock was bought
+    (datetime) sellDay: which day the stock was sold
+    (str) errorMsg: error message if any
     """
     # Initialize the maximum profit amount to zero
     max_profit_amt = 0
@@ -145,7 +151,7 @@ def max_profit(stockData, start_date, end_date):
                 buyDay, sellDay = dates[i], dates[j]
 
     # Return the maximum profit amount
-    return [max_profit_amt, buyDay, sellDay, errorMsg]
+    return [start_date, end_date, max_profit_amt, buyDay, sellDay, errorMsg]
 
 def binary_search(dates, target):
     pass
