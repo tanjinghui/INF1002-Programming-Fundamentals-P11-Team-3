@@ -78,3 +78,55 @@ def plot_updown_trend(results):
         )
     # fig.show()
     return fig.to_html(full_html = False)
+
+def plot_max_profit(stockData, results):
+    """
+    https://plotly.com/python/candlestick-charts
+    """
+    datesData = stockData['Dates']
+    indexStart = datesData.index(results[0])
+    indexEnd = datesData.index(results[1])
+    datesData = datesData[indexStart:indexEnd]
+    openData = stockData['Open'][indexStart:indexEnd]
+    highData = stockData['High'][indexStart:indexEnd]
+    lowData = stockData['Low'][indexStart:indexEnd]
+    closeData = stockData['Close/Last'][indexStart:indexEnd]
+
+    indexBuy = datesData.index(results[3])
+    indexSell = datesData.index(results[4])
+
+    fig = go.Figure(
+        data=[go.Candlestick(x=datesData,
+        open=openData,
+        high=highData,
+        low=lowData,
+        close=closeData)],
+        layout=go.Layout(
+            title_text=f"Max Profit betwween {results[0]} and {results[1]} is ${results[2]}",
+            hovermode='x unified',
+            xaxis=dict(
+                title_text='Date',
+                unifiedhovertitle=dict(
+                    text='<b>%{x|%A, %B %d,%Y}</b>'
+                )
+            ),
+            yaxis=dict(
+                title_text='Price (USD)',
+                tickprefix='$'
+            )
+        )
+    )
+    fig.add_trace(go.Scatter(x=datesData[indexBuy], y=highData[indexBuy],
+                           mode = 'markers',
+                           marker = dict(color='green',
+                                         symbol = 'Diamond',
+                                         size = 5),
+                           name = 'Buy Day'))
+    fig.add_trace(go.Scatter(x=datesData[indexSell], y=highData[indexSell],
+                           mode = 'markers',
+                           marker = dict(color='red',
+                                         symbol = 'Diamond',
+                                         size = 5),
+                           name = 'Buy Day'))
+    # fig.show()
+    return fig.to_html(full_html = False)
