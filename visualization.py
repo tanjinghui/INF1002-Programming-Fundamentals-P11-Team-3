@@ -39,7 +39,13 @@ def plot_smaGraph(smaData, days_window):
     )
     return fig.to_html(full_html = False)
 
-def plot_updown_trend(datesData, pricesData, indexStart, indexEnd, trendData, sample_days):
+def plot_updown_trend(results):
+    datesData = results[0]
+    pricesData = results[1]
+    indexStart = results[2]
+    indexEnd = results[3]
+    sample_days = results[4]
+    trendData = results[5]
     fig = go.Figure(
         data=[
             go.Scatter(
@@ -50,7 +56,7 @@ def plot_updown_trend(datesData, pricesData, indexStart, indexEnd, trendData, sa
             ),
         ],
         layout=go.Layout(
-            title_text=f"trend line for last {sample_days} samples",
+            title_text=f"Trend line for last {sample_days} samples",
             hovermode='x unified',
             xaxis=dict(
                 title_text='Date',
