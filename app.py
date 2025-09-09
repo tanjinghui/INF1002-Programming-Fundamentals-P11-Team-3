@@ -84,6 +84,21 @@ def trendPage():
         return render_template("trend.html", results = results, trendwindow = trend_window, stert_date = start_date, end_date = end_date, trendGraph= trendGraph, errorMsg=results[6], bullOrBear = results[7])
     return render_template("trend.html", results = None, trendwindow = None, stert_date = start_date, end_date = end_date, trendGraph= None, errorMsg=None, bullOrBear = None)
 
+@app.route("/max_profit", methods = ["GET", "POST"])
+def max_profit_Page():
+    results = None
+    start_date = None
+    end_date = None
+    maxProfitGraph = None
+    if request.method == "POST":
+        start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
+        end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
+#        trend_window = int(request.form.get("trend_window"))
+        results = functions.max_profit(stockData, start_date, end_date)
+        max_profit_Graph = visualization.plot_max_profit(results)
+        return render_template("max_profit.html", results = results, stert_date = start_date, end_date = end_date, max_profit_Graph= max_profit_Graph, errorMsg=results[5])
+    return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=None)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
