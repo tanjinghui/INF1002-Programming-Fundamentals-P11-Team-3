@@ -1,43 +1,50 @@
 import plotly.graph_objects as go
 
 def plot_smaGraph(smaData, days_window):
-#   smaData: type dict
-#   days_window: type int
-    dates = [i for i in smaData['Date']]
-    prices = [i for i in smaData["Close/Last"]]
-    sma = [i for i in smaData["SMA"]]
-
+    dates = [i["Date"] for i in smaData]
+    prices = [i["Close/Last"] for i in smaData]
+    sma = [i["SMA"] for i in smaData]
+    # -------------------------------------------
+    # 1. Create line plots for Close/Last and SMA
+    # -------------------------------------------
     fig = go.Figure(
-        data=[
-            go.Scatter(
-                x=dates,
-                y=prices,
-                mode='lines',
-                name='Close Price'
-            ),
-            go.Scatter(
-                x=dates,
-                y=sma,
-                mode='lines',
-                name=f"[days_window]-day SMA"
+    data=[
+        go.Scatter(
+            x=dates,
+            y=prices,
+            mode='lines',
+            name='Close Price'
+        ),
+        go.Scatter(
+            x=dates,
+            y=sma,
+            mode='lines',
+            name=f"{days_window}-day SMA"
+        )
+    ],
+    # -------------------------------------------
+    # 1.5 Customize layout of the graph with hover over interaction, namings, and information
+    # -------------------------------------------
+    layout=go.Layout(
+        title_text="Daily Closing Price vs Simple Moving Average",
+        hovermode='x unified',
+        xaxis=dict(
+            title_text='Date',
+            unifiedhovertitle=dict(
+                text='<b>%{x|%A, %B %d, %Y}</b>'
             )
-        ],
-        layout=go.layout(
-            title_text="Daily Closing Price vs Simple Moving Average",
-            hovermode='x unified',
-            xaxis=dict(
-                title_text='Date',
-                unifiedhovertitle=dict(
-                    text='<b>%{x|%A, %B %d,%Y}</b>'
-                )
-            ),
-            yaxis=dict(
-                title_text='Price (USD)',
-                tickprefix='$'
-            )
+        ),
+        yaxis=dict(
+            title_text='Price (USD)',
+            tickprefix='$'
         )
     )
+)
+    # -------------------------------------------
+    # 2. Show the graph
+    # -------------------------------------------
     return fig.to_html(full_html = False)
+
 
 def plot_updown_trend(results):
     datesData = results[0]

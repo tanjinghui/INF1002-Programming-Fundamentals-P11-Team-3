@@ -14,7 +14,7 @@
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="/">SMA Calculator</a>
+            <a class="navbar-brand ps-3" href="/">Stock Analysis</a>
         </nav>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
@@ -25,8 +25,8 @@
                             <a class="nav-link" href="/sma">
                                 Simple Moving Average Calculator
                             </a>
-                            <a class="nav-link" href="index.html">
-                                Dashboard
+                            <a class="nav-link" href="/trend">
+                                Trend Finder
                             </a>
                             <a class="nav-link" href="index.html">
                                 Dashboard
@@ -38,7 +38,7 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Dashboard</h1>
+                        <h1 class="mt-4">SMA Calculator</h1>
                         <div class="row">
                             <div class="col-xl-3">
                                 <form method="POST" class="form-group">
@@ -55,9 +55,37 @@
                                     <button type="submit">Calculate</button>
                                 </form>
                             </div>
-                            <div>
+                            <div class="col-xl-4">
+                                {% if results %}
+                                    <h3>Results for {{ days_window }}-Day SMA ({{ start_date.date() }} → {{ end_date.date() }})</h3>
+                                    <table class = "table table-striped">
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Close</th>
+                                            <th>SMA</th>
+                                        </tr>
+
+                                    {% for i in results %}
+                                        <tr>
+                                            <td>{{ i["Date"].strftime("%Y-%m-%d") }}</td>
+                                            <td>${{ "%.2f"|format(i["Close/Last"]) }}</td>
+                                            <td>
+                                                {% if i["SMA"] %}
+                                                    ${{ "%.2f"|format(i["SMA"]) }}
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+
+                                    </table>
+                                    
+                                {% endif %} 
+                            </div>
+                            <div class="col-xl-4">
                                 {% if smaGraph %}
-                                    {{ smaGraph | safe}}
+                                    {{ smaGraph | safe }}
                                 {% endif %}
                             </div>
                         </div>

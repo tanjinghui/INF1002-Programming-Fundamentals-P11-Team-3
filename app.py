@@ -45,11 +45,14 @@ def loadData(csvfile):
 
     return {"Date" : list(dates), "Close/Last" : list(close_prices), "Volume" : list(volume), "Open" : list(open_price), "High" : list(high_price), "Low" : list(low_price)}
 
+
 stockData = loadData("data/apple.csv")
+
 
 @app.route("/")
 def home():
     return render_template("index.html")
+
 
 @app.route("/sma", methods = ["GET", "POST"])
 def smaPage():
@@ -68,6 +71,7 @@ def smaPage():
 
     return render_template("sma.html", results = results, dayswindow = days_window, stert_date = start_date, end_date = end_date, smaGraph= smaGraph)
 
+
 @app.route("/trend", methods = ["GET", "POST"])
 def trendPage():
     results = None
@@ -83,6 +87,7 @@ def trendPage():
         trendGraph = visualization.plot_updown_trend(results)
         return render_template("trend.html", results = results, trendwindow = trend_window, stert_date = start_date, end_date = end_date, trendGraph= trendGraph, errorMsg=results[6], bullOrBear = results[7])
     return render_template("trend.html", results = None, trendwindow = None, stert_date = start_date, end_date = end_date, trendGraph= None, errorMsg=None, bullOrBear = None)
+
 
 @app.route("/max_profit", methods = ["GET", "POST"])
 def max_profit_Page():

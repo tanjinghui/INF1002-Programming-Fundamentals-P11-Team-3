@@ -152,19 +152,75 @@ def max_profit(stockData, start_date, end_date):
     # Return the maximum profit amount
     return [start_date, end_date, max_profit_amt, buyDay, sellDay, errorMsg]
 
-def binary_search(dates, target):
-    pass
+################################################################################################################################NEW BY RUO CHEN############################################################################################################
+def binary_search(dates: list[datetime], target: datetime) -> int:
+    # -------------------------------------------
+    # 1. Standard binary search with two pointers that finds the date by dividing by 2 each search
+    # -------------------------------------------
+    start = 0
+    end = len(dates) - 1
+
+    while start <= end:
+        mid = (start + end) // 2
+        if dates[mid] >= target:
+            end = mid - 1
+        else:
+            start = mid + 1
+        
+    return start
 
 
-def calc_sma(close_prices, window):
-    pass
+def calc_sma(close_prices: list[float], days_window: int) -> list[float]:
+    # -------------------------------------------
+    # 1. Populate sma_prices list so that dates with less than window days will have None value
+    # 2. Returns None value list as the window is too big for the selected range
+    # ------------------------------------------- 
+    sma_prices = [None] * len(close_prices)
+    if len(close_prices) < days_window:
+        return sma_prices
+    
+    # ------------------------------------------- 
+    # 3. Calculate sum of first window and update it into sma_prices
+    # ------------------------------------------- 
+    closeSum = sum(close_prices[:days_window])
+    sma_prices[days_window - 1] = round(closeSum / days_window, 2)
 
-def simple_moving_average(stockData, start_date, end_date, days_window):
-    pass
+    # ------------------------------------------- 
+    # 4. For loop over each price/date and adding the current while subtracting the earliest price/date
+    # 5. Calculate SMA by diving by window and rounding off to 2 d.p. while updating sma_prices
+    # ------------------------------------------- 
+    for i in range(days_window, len(close_prices)):
+        closeSum += close_prices[i] - close_prices[i - days_window]
+        sma_prices[i] = round(closeSum / days_window, 2)
 
-def weighted_moving_average(stockData):
-    pass
+    return sma_prices
 
 
-def exponential_moving_average(stockData):
-    pass
+def simple_moving_average(stockData: dict[str, list[object]], start_date: datetime, end_date: datetime, days_window: int) -> list[dict[str, object]]:
+    # -------------------------------------------
+    # 1. Get the starting and end dates that the user wants
+    # 2. Calls for binary search for both dates to return their indexes in dates
+    # 3. Filters both dates and prices so calc_sma will be more efficient as there is less data
+    # -------------------------------------------
+    dates = stockData["Date"]
+    close_prices = stockData["Close/Last"]
+
+    startDate = binary_search(dates, start_date)
+    endDate = binary_search(dates, end_date)
+
+    filtered_dates = dates[startDate : endDate + 1]
+    filtered_prices = close_prices[startDate : endDate + 1]
+
+    # -------------------------------------------
+    # 3. Calculate SMA
+    # -------------------------------------------
+    smaResults = calc_sma(filtered_prices, days_window)
+
+    # -------------------------------------------
+    # 4. Append smaResults into smaData and return results
+    # -------------------------------------------
+    smaData = []
+    for date, price, sma in zip(filtered_dates, filtered_prices, smaResults):
+        smaData.append({"Date" : date, "Close/Last" : price, "SMA" : sma})
+    return smaData
+################################################################################################################################NEW BY RUO CHEN############################################################################################################
