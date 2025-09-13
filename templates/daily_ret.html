@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>SMA / Stock Analysis</title>
+        <title>Daily Returns / Stock Analysis</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="static/style.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -14,7 +14,7 @@
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="/">Dashboard</a>
+            <a class="navbar-brand ps-3" href="/">Stock Analysis</a>
         </nav>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
@@ -33,8 +33,7 @@
                             </a>
                             <a class="nav-link" href="/trend">
                                 Trend Finder
-                            </a>
-                            </a>
+                            </a>  
                         </div>
                     </div>
                 </nav>
@@ -42,11 +41,11 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Max Profit Finder</h1>
+                        <h1 class="mt-4">Daily Returns Calculator</h1>
                         <div class="row">
                             <div class="col-xl-3">
                                 <form method="POST" class="form-group">
-                                    <h3>Settings for Calculations</h3>
+                                    <h3>Calculate Daily Returns</h3>
                                     <label for="start_date">Start Date:</label>
                                     <input type="date" name="start_date" required>
                                     <br>
@@ -55,13 +54,34 @@
                                     <br>
                                     <button type="submit">Calculate</button>
                                 </form>
-                                {% if errorMsg %}
-                                    {{ errorMsg | safe}}
-                                {% endif %}
                             </div>
-                            <div class="col-xl-8">
-                                {% if max_profit_Graph %}
-                                    {{ max_profit_Graph | safe}}
+                            <div class="col-xl-4">
+                                {% if results %}
+                                    <h3>Daily Returns ({{ start_date.date() }} → {{ end_date.date() }})</h3>
+                                    <table class = "table table-striped">
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Daily Return</th>
+                                        </tr>
+                                    {% for i in results %}
+                                        <tr>
+                                            <td>{{ i["Date"].strftime("%Y-%m-%d") }}</td>
+                                            <td>
+                                                {% if i["Daily Return"] is not none %}
+                                                    {{ "%.2f"|format(i["Daily Return"] * 100) }}%
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </table>
+                                    
+                                {% endif %} 
+                            </div>
+                            <div class="col-xl-4">
+                                {% if daily_ret_graph %}
+                                    {{ daily_ret_graph | safe }}
                                 {% endif %}
                             </div>
                         </div>

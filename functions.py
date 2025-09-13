@@ -224,7 +224,7 @@ def simple_moving_average(stockData: dict[str, list[object]], start_date: dateti
         smaData.append({"Date" : date, "Close/Last" : price, "SMA" : sma})
     return smaData
 
-def daily_avg(stockData):
+def daily_ret(stockData):
 
     dates = stockData["Date"]
     closes = stockData["Close/Last"]
@@ -234,7 +234,7 @@ def daily_avg(stockData):
         ret = (closes[i] - closes[i-1]) / closes[i-1]
         daily_returns.append(ret)
 
-    # Return as list of tuples (date, return)
-    return list(zip(dates, daily_returns))
+    # Return as list of dicts (date, daily return)
+    return [{"Date": d, "Daily Return": r} for d, r in zip(dates, daily_returns)]
 
 ################################################################################################################################NEW BY RUO CHEN############################################################################################################
