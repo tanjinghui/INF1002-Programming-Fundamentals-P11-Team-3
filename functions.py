@@ -212,12 +212,12 @@ def simple_moving_average(stockData: dict[str, list[object]], start_date: dateti
     filtered_prices = close_prices[startDate : endDate + 1]
 
     # -------------------------------------------
-    # 3. Calculate SMA
+    # 4. Calculate SMA
     # -------------------------------------------
     smaResults = calc_sma(filtered_prices, days_window)
 
     # -------------------------------------------
-    # 4. Append smaResults into smaData and return results
+    # 5. Append smaResults into smaData and return results
     # -------------------------------------------
     smaData = []
     for date, price, sma in zip(filtered_dates, filtered_prices, smaResults):
