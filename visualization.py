@@ -1,4 +1,5 @@
 import plotly.graph_objects as go
+from datetime import datetime
 
 def plot_smaGraph(smaData, days_window):
     dates = [i["Date"] for i in smaData]
@@ -145,3 +146,59 @@ def plot_max_profit(stockData, results):
                     )
     # fig.show()
     return fig.to_html(full_html = False)
+
+def plot_daily_ret(results):
+    """
+    results: list of dicts or tuples/namedtuples with 'Date' and 'Daily Return'
+    Example dict: {'Date': datetime, 'Daily Return': 0.01}
+    Example tuple: (datetime, 0.01) or namedtuple with fields 'Date' and 'Daily Return'
+    """
+    
+    dates = []
+    daily_returns = []
+
+    for i in results:
+        # If i is a dict
+        if isinstance(i, dict):
+            date = i.get("Date")
+            ret = i.get("Daily Return")
+        # If i is a namedtuple
+        elif hasattr(i, "_fields"):
+            date = getattr(i, "Date", None)
+            ret = getattr(i, "Daily Return", None)
+        # If i is a plain tuple
+        else:
+            if len(i) >= 2:
+                date, ret = i[0], i[1]
+            else:
+                continue  # skip malformed entries
+
+        # Convert string date to datetime if needed
+        if isinstance(date, str):
+            try:
+                date = datetime.fromisoformat(date)
+            except ValueError:
+                pass  # keep as string if format unknown
+
+        dates.append(date)
+        daily_returns.append(ret)
+
+    # Build figure
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=dates,
+        y=daily_returns,
+        mode="lines+markers",
+        name="Daily Returns",
+        line=dict(color="blue", width=2),
+        hovertemplate='%{x}<br>Return: %{y:.2%}<extra></extra>'
+    ))
+
+    fig.update_layout(
+        title="Apple Daily Returns",
+        xaxis_title="Date",
+        yaxis_title="Daily Return",
+        template="plotly_white"
+    )
+
+    return fig.to_html(full_html=False)

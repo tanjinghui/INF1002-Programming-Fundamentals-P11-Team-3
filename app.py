@@ -69,7 +69,7 @@ def smaPage():
         results = functions.simple_moving_average(stockData, start_date, end_date, days_window)
         smaGraph = visualization.plot_smaGraph(results, days_window)
 
-    return render_template("sma.html", results = results, dayswindow = days_window, stert_date = start_date, end_date = end_date, smaGraph= smaGraph)
+    return render_template("sma.html", results = results, dayswindow = days_window, start_date = start_date, end_date = end_date, smaGraph= smaGraph)
 
 
 @app.route("/trend", methods = ["GET", "POST"])
@@ -103,6 +103,36 @@ def max_profit_Page():
         max_profit_Graph = visualization.plot_max_profit(stockData,results)
         return render_template("max_profit.html", results = results, stert_date = start_date, end_date = end_date, max_profit_Graph= max_profit_Graph, errorMsg=results[5])
     return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=None)
+
+@app.route("/daily_return", methods = ["GET", "POST"])
+def daily_return_Page():
+    results = None
+    start_date = None
+    end_date = None
+    daily_ret_graph = None
+
+    if request.method == "POST":
+        start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
+        end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
+        results = functions.daily_ret(stockData)
+        # Filter results by date range
+        if results and start_date and end_date:
+            # Ensure date in result is datetime, convert if needed
+            filtered = []
+            for row in results:
+                date_val = row["Date"]
+                if isinstance(date_val, str):
+                    try:
+                        date_val = datetime.fromisoformat(date_val)
+                    except Exception:
+                        continue
+                if start_date <= date_val <= end_date:
+                    filtered.append({"Date": date_val, "Daily Return": row["Daily Return"]})
+            results = filtered
+        daily_ret_graph = visualization.plot_daily_ret(results)
+
+    return render_template("daily_ret.html", results = results, start_date = start_date, end_date = end_date, daily_ret_graph= daily_ret_graph)
+
 
 
 if __name__ == "__main__":
