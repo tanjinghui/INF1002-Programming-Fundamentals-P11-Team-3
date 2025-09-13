@@ -1,7 +1,7 @@
 def ols_regression(x_data, y_data):
     """
     !!!this function was made by Google AI and editted + debugged by JacobLeow!!!
-    
+
     Implements Ordinary Least Squares (OLS) regression without external libraries.
 
     Args:
@@ -15,7 +15,7 @@ def ols_regression(x_data, y_data):
     n = len(x_data)
     if len(x_data) != len(y_data):
         raise ValueError("len_x_data != len_y_data")
-    
+
     # Calculate sums
     # print(x_data[:10])
     # print(y_data[:10])
@@ -31,11 +31,12 @@ def ols_regression(x_data, y_data):
         raise ValueError("Denominator for slope is zero. Cannot perform OLS.")
     slope = numerator_slope / denominator_slope
 
-    # Calculate intercept 
+    # Calculate intercept
     intercept = (sum_y - slope * sum_x) / n
     # print(f"Slope: {slope}\nIntercept:{intercept}")
 
     return slope, intercept
+
 
 def trend_finder(stockData, start_date, end_date, sample_days):
     # NOTE:
@@ -45,7 +46,7 @@ def trend_finder(stockData, start_date, end_date, sample_days):
     # assume indexEnd-sample_days > 0
     #
     # return values:
-    # (list) dates: list of dates 
+    # (list) dates: list of dates
     # (list) prices: list of closing prices
     # (int) indexStart: index of start_date in dates
     # (int) indexEnd: index of end_date in dates
@@ -54,13 +55,13 @@ def trend_finder(stockData, start_date, end_date, sample_days):
     #
     dates = [i for i in stockData["Date"]]
     prices = [i for i in stockData["Close/Last"]]
-    index = [i for i,v in enumerate(stockData["Date"])]
+    index = [i for i, v in enumerate(stockData["Date"])]
     indexStart = dates.index(start_date)
     indexEnd = dates.index(end_date)
-    trend,const = ols_regression(
-        index[indexEnd-sample_days : indexEnd],
-        prices[indexEnd-sample_days : indexEnd]
-        )
+    trend, const = ols_regression(
+        index[indexEnd-sample_days: indexEnd],
+        prices[indexEnd-sample_days: indexEnd]
+    )
     print(trend)
     if trend > 0.35:
         bullOrBear = True
@@ -68,8 +69,10 @@ def trend_finder(stockData, start_date, end_date, sample_days):
         bullOrBear = False
     else:
         bullOrBear = None
-    trend_data = [const + (trend*i) for i in index[indexEnd-sample_days:indexEnd]]
-    return([dates, prices, indexStart, indexEnd, trend_data, bullOrBear])
+    trend_data = [const + (trend*i)
+                  for i in index[indexEnd-sample_days:indexEnd]]
+    return ([dates, prices, indexStart, indexEnd, trend_data, bullOrBear])
+
 
 def binary_search(dates, target):
     pass
@@ -78,8 +81,10 @@ def binary_search(dates, target):
 def calc_sma(close_prices, window):
     pass
 
+
 def simple_moving_average(stockData, start_date, end_date, days_window):
     pass
+
 
 def weighted_moving_average(stockData):
     pass
@@ -87,3 +92,30 @@ def weighted_moving_average(stockData):
 
 def exponential_moving_average(stockData):
     pass
+
+
+# Define a function to calculate the maximum profit from buying and selling stocks
+def max_profit(stock_price):
+    # Initialize the maximum profit amount to zero
+    max_profit_amt = 0
+
+    # Iterate through the stock prices using a nested loop
+    for i in range(len(stock_price)):
+        # Initialize the profit amount for the current day to zero
+        profit_amt = 0
+
+        # Iterate through the subsequent days to find potential profit
+        for k in range(i+1, len(stock_price)):
+            # Calculate the profit by subtracting the buying price from the selling price
+            profit_amt = stock_price[k] - stock_price[i]
+
+            # Update the maximum profit if the current profit is greater
+            if profit_amt > max_profit_amt:
+                max_profit_amt = profit_amt
+
+    # Return the maximum profit amount
+    return max_profit_amt
+
+
+# Test the function with a list of stock prices and print the result
+print(max_profit([224, 236, 247, 258, 259, 225]))  # need change values
