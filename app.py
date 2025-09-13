@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from datetime import datetime
+from datetime import datetime,timedelta
 import csv
 import functions
 import visualization
@@ -75,22 +75,14 @@ def trendPage():
     end_date = None
     trend_window = None
     trendGraph = None
-    bullOrBear = None
-    errorMsg = None
     if request.method == "POST":
         start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
         end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
-        if start_date.weekday() < 5 and end_date.weekday() < 5:
-            errorMsg = None
-            print(end_date)
-            trend_window = int(request.form.get("trend_window"))
-            results = functions.trend_finder(stockData, start_date, end_date, trend_window)
-            trendGraph = visualization.plot_updown_trend(results[0], results[1], results[2], results[3], results[4], trend_window)
-            return render_template("trend.html", results = results, trendwindow = trend_window, stert_date = start_date, end_date = end_date, trendGraph= trendGraph, errorMsg=errorMsg, bullOrBear = results[5])
-        else:
-            errorMsg = "Error: Please select a weekday (Mon-Fri) for both start and end date."
-            return render_template("trend.html", results = None, trendwindow = None, stert_date = start_date, end_date = end_date, trendGraph= None, errorMsg=errorMsg)
-    return render_template("trend.html", results = None, trendwindow = None, stert_date = start_date, end_date = end_date, trendGraph= None, errorMsg=None)
+        trend_window = int(request.form.get("trend_window"))
+        results = functions.trend_finder(stockData, start_date, end_date, trend_window)
+        trendGraph = visualization.plot_updown_trend(results)
+        return render_template("trend.html", results = results, trendwindow = trend_window, stert_date = start_date, end_date = end_date, trendGraph= trendGraph, errorMsg=results[6], bullOrBear = results[7])
+    return render_template("trend.html", results = None, trendwindow = None, stert_date = start_date, end_date = end_date, trendGraph= None, errorMsg=None, bullOrBear = None)
 
 
 if __name__ == "__main__":
