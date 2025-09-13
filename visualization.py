@@ -145,3 +145,27 @@ def plot_max_profit(stockData, results):
                     )
     # fig.show()
     return fig.to_html(full_html = False)
+
+def plot_daily_avg(results):
+
+    dates = [i for i in results['Date']]
+    daily_returns = [i for i in daily_returns['Date']]
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(
+        x=dates,
+        y=daily_returns,
+        mode="lines",
+        name="Daily Returns",
+        line=dict(color="blue")
+    ))
+
+    # Layout
+    fig.update_layout(
+        title="Apple Daily Returns",
+        xaxis_title="Date",
+        yaxis_title="Daily Return",
+        template="plotly_white"
+    )
+
+    return fig.to_html(full_html = False)

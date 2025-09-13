@@ -69,7 +69,7 @@ def smaPage():
         results = functions.simple_moving_average(stockData, start_date, end_date, days_window)
         smaGraph = visualization.plot_smaGraph(results, days_window)
 
-    return render_template("sma.html", results = results, dayswindow = days_window, stert_date = start_date, end_date = end_date, smaGraph= smaGraph)
+    return render_template("sma.html", results = results, dayswindow = days_window, start_date = start_date, end_date = end_date, smaGraph= smaGraph)
 
 
 @app.route("/trend", methods = ["GET", "POST"])
@@ -103,6 +103,22 @@ def max_profit_Page():
         max_profit_Graph = visualization.plot_max_profit(stockData,results)
         return render_template("max_profit.html", results = results, stert_date = start_date, end_date = end_date, max_profit_Graph= max_profit_Graph, errorMsg=results[5])
     return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=None)
+
+@app.route("/daily_average", methods = ["GET", "POST"])
+def daily_average_Page():
+    results = None
+    start_date = None
+    end_date = None
+    daily_avg_graph = None
+
+    if request.method == "POST":
+        start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
+        end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
+        results = functions.daily_avg(stockData)
+        daily_avg_graph = visualization.plot_daily_avg(results)
+
+    return render_template("daily_avg.html", results = results, start_date = start_date, end_date = end_date, daily_avg_graph= daily_avg_graph)
+
 
 
 if __name__ == "__main__":
