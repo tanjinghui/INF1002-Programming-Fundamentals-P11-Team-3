@@ -60,16 +60,16 @@ def smaPage():
     start_date = None
     end_date = None
     days_window = None
-    smaGraph = None
+    maGraph = None
 
     if request.method == "POST":
         start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
         end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
         days_window = int(request.form.get("days_window"))
-        results = functions.simple_moving_average(stockData, start_date, end_date, days_window)
-        smaGraph = visualization.plot_smaGraph(results, days_window)
+        results = functions.moving_average(stockData, start_date, end_date, days_window)
+        maGraph = visualization.plot_maGraph(results, days_window)
 
-    return render_template("sma.html", results = results, dayswindow = days_window, start_date = start_date, end_date = end_date, smaGraph= smaGraph)
+    return render_template("sma.html", results = results, dayswindow = days_window, start_date = start_date, end_date = end_date, maGraph= maGraph)
 
 
 @app.route("/trend", methods = ["GET", "POST"])
@@ -104,6 +104,7 @@ def max_profit_Page():
         return render_template("max_profit.html", results = results, stert_date = start_date, end_date = end_date, max_profit_Graph= max_profit_Graph, errorMsg=results[5])
     return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=None)
 
+
 @app.route("/daily_return", methods = ["GET", "POST"])
 def daily_return_Page():
     results = None
@@ -137,13 +138,3 @@ def daily_return_Page():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-
-#references
-#https://www.w3schools.com/python/default.asp
-#https://en.wikipedia.org/wiki/Moving_average
-#https://www.investopedia.com/articles/active-trading/052014/how-use-moving-average-buy-stocks.asp
-#https://docs.python.org/3/library/csv.html
-#https://www.geeksforgeeks.org/python/flask-http-methods-handle-get-post-requests/
-#https://plotly.com/python/line-and-scatter/#linear-regression-and-other-trendlines

@@ -1,10 +1,11 @@
 import plotly.graph_objects as go
 from datetime import datetime
 
-def plot_smaGraph(smaData, days_window):
-    dates = [i["Date"] for i in smaData]
-    prices = [i["Close/Last"] for i in smaData]
-    sma = [i["SMA"] for i in smaData]
+def plot_maGraph(maData, days_window):
+    dates = [i["Date"] for i in maData]
+    prices = [i["Close/Last"] for i in maData]
+    sma = [i["SMA"] for i in maData]
+    ema = [i["EMA"] for i in maData]
     # -------------------------------------------
     # 1. Create line plots for Close/Last and SMA
     # -------------------------------------------
@@ -21,13 +22,19 @@ def plot_smaGraph(smaData, days_window):
             y=sma,
             mode='lines',
             name=f"{days_window}-day SMA"
+        ),
+        go.Scatter(
+            x=dates,
+            y=ema,
+            mode='lines',
+            name=f"{days_window}-day EMA"
         )
     ],
     # -------------------------------------------
     # 1.5 Customize layout of the graph with hover over interaction, namings, and information
     # -------------------------------------------
     layout=go.Layout(
-        title_text="Daily Closing Price vs Simple Moving Average",
+        title_text="Daily Closing Price vs SMA vs EMA",
         hovermode='x unified',
         xaxis=dict(
             title_text='Date',

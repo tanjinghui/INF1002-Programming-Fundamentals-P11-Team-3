@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>SMA / Stock Analysis</title>
+        <title>Moving Average/ Stock Analysis</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="static/style.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -26,7 +26,7 @@
                                 Home
                             </a> 
                             <a class="nav-link" href="/sma">
-                                Simple Moving Average Calculator
+                                Moving Average Calculator
                             </a>
                             <a class="nav-link" href="/daily_return">
                                 Daily Average
@@ -42,31 +42,36 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">SMA Calculator</h1>
+                        <h1 class="mt-4">Moving Average Calculator</h1>
                         <div class="row">
                             <div class="col-xl-3">
                                 <form method="POST" class="form-group">
-                                    <h3>Calculate Simple Moving Average</h3>
+                                    <h3>Calculate Moving Averages</h3>
                                     <label for="start_date">Start Date:</label>
                                     <input type="date" name="start_date" required>
                                     <br>
                                     <label for="end_date">End Date:</label>
                                     <input type="date" name="end_date" required>
                                     <br>
-                                    <label for="days_window">SMA Window (days):</label>
+                                    <label for="days_window">SMA and EMA Window (days):</label>
                                     <input type="number" name="days_window" min="1" required>
                                     <br>
                                     <button type="submit">Calculate</button>
                                 </form>
                             </div>
-                            <div class="col-xl-4">
+                            <div class="col-xl-8">
+                                 {% if maGraph %}
+                                    {{ maGraph | safe }}
+                                {% endif %}
+
                                 {% if results %}
-                                    <h3>Results for {{ days_window }}-Day SMA ({{ start_date.date() }} → {{ end_date.date() }})</h3>
+                                    <h3>Results for {{ days_window }}-Day SMA and EMA ({{ start_date.date() }} → {{ end_date.date() }})</h3>
                                     <table class = "table table-striped">
                                         <tr>
                                             <th>Date</th>
                                             <th>Close</th>
                                             <th>SMA</th>
+                                            <th>EMA</th>
                                         </tr>
 
                                     {% for i in results %}
@@ -80,16 +85,18 @@
                                                     -
                                                 {% endif %}
                                             </td>
+                                            <td>
+                                                {% if i["EMA"] %}
+                                                    ${{ "%.2f"|format(i["EMA"]) }}
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            </td>
                                         </tr>
                                     {% endfor %}
 
                                     </table>
                                     
-                                {% endif %} 
-                            </div>
-                            <div class="col-xl-4">
-                                {% if smaGraph %}
-                                    {{ smaGraph | safe }}
                                 {% endif %}
                             </div>
                         </div>

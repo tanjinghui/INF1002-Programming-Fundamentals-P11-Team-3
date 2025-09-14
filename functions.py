@@ -152,7 +152,7 @@ def max_profit(stockData, start_date, end_date):
     # Return the maximum profit amount
     return [start_date, end_date, max_profit_amt, buyDay, sellDay, errorMsg]
 
-################################################################################################################################NEW BY RUO CHEN############################################################################################################
+
 def binary_search(dates: list[datetime], target: datetime) -> int:
     # -------------------------------------------
     # 1. Standard binary search with two pointers that finds the date by dividing by 2 each search
@@ -192,11 +192,24 @@ def calc_sma(close_prices: list[float], days_window: int) -> list[float]:
     for i in range(days_window, len(close_prices)):
         closeSum += close_prices[i] - close_prices[i - days_window]
         sma_prices[i] = round(closeSum / days_window, 2)
-
+    
     return sma_prices
 
 
-def simple_moving_average(stockData: dict[str, list[object]], start_date: datetime, end_date: datetime, days_window: int) -> list[dict[str, object]]:
+def calc_ema(close_prices: list[float], smaData: list[float], days_window: int) -> list[float]:
+    multiplier = 2 / (days_window + 1)
+    n = len(smaData)
+    ema_prices = [None] * n
+
+    ema_prices[days_window - 1] = smaData[days_window - 1]
+
+    for i in range(days_window, n):
+        ema_prices[i] = round((close_prices[i] * multiplier) + (ema_prices[i - 1] * (1 - multiplier)), 2)
+    
+    return ema_prices
+
+
+def moving_average(stockData: dict[str, list[object]], start_date: datetime, end_date: datetime, days_window: int) -> list[dict[str, object]]:
     # -------------------------------------------
     # 1. Get the starting and end dates that the user wants
     # 2. Calls for binary search for both dates to return their indexes in dates
@@ -212,17 +225,19 @@ def simple_moving_average(stockData: dict[str, list[object]], start_date: dateti
     filtered_prices = close_prices[startDate : endDate + 1]
 
     # -------------------------------------------
-    # 4. Calculate SMA 
+    # 4. Calculate SMA and EMA
     # -------------------------------------------
     smaResults = calc_sma(filtered_prices, days_window)
+    emaResults = calc_ema(filtered_prices, smaResults, days_window)
 
     # -------------------------------------------
-    # 5. Append smaResults into smaData and return results
+    # 5. Append smaResults and emaResults into maData and return results
     # -------------------------------------------
-    smaData = []
-    for date, price, sma in zip(filtered_dates, filtered_prices, smaResults):
-        smaData.append({"Date" : date, "Close/Last" : price, "SMA" : sma})
-    return smaData
+    maData = []
+    for date, price, sma, ema in zip(filtered_dates, filtered_prices, smaResults, emaResults):
+        maData.append({"Date" : date, "Close/Last" : price, "SMA" : sma, "EMA" : ema})
+    return maData
+
 
 def daily_ret(stockData):
 
@@ -236,5 +251,3 @@ def daily_ret(stockData):
 
     # Return as list of dicts (date, daily return)
     return [{"Date": d, "Daily Return": r} for d, r in zip(dates, daily_returns)]
-
-################################################################################################################################NEW BY RUO CHEN############################################################################################################
