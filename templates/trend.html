@@ -22,6 +22,7 @@
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             <div class="sb-sidenav-menu-heading">Core Functionalities</div>
+                            <!--Side Bar menu-->
                             <a class="nav-link" href="/index.html">
                                 Home
                             </a> 
@@ -57,23 +58,32 @@
                                     <br>
                                     <button type="submit">Calculate</button>
                                 </form>
+                                <!--Only show if not None-->
                                 {% if errorMsg %}
                                     {{ errorMsg | safe}}
                                 {% endif %}
                             </div>
                             <div class="col-xl-8">
+                                <!--Only show if not None-->
                                 {% if trendGraph %}
                                     {{ trendGraph | safe}}
                                 {% endif %}
                             </div>
                         </div>
-                        <div class="row" align="center", padding-top="20px", padding-bottom="20px">
+                        <div class="row", style="text-align:center;">
                                 {% if bullOrBear %}
-                                    <h3 style="background-color:green;;">The trend indicates a Bull Market.</h3>
+                                    <h3 style="background-color:green; padding-top: 50px; padding-bottom:50px;">
+                                        The trend indicates a Bull Market. (Upwards Trend for last {{trend_window | safe}} days)
+                                    </h3>
                                 {% elif bullOrBear == False %}
-                                    <h3 style="background-color:red;">The trend indicates a Bear Market.</h3>
+                                    <h3 style="background-color:red; padding-top: 50px; padding-bottom:50px;">
+                                        The trend indicates a Bear Market. (Downwards Trend for last {{trend_window | safe}} days)
+                                    </h3>
                                 {% elif bullOrBear == None and results %}
-                                    <h3 style="background-color:orange;">The trend is Neutral.</h3>
+                                    <!-- bullOrBear init is None, so need check if anything was calculated in order to only show when submitted -->
+                                    <h3 style="background-color:orange; padding-top: 50px; padding-bottom:50px;">
+                                        The trend is Neutral. (Flat Trend for last {{trend_window | safe}} days)
+                                    </h3>
                                 {% endif %}
                         </div>
                     </div>

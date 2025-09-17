@@ -55,17 +55,16 @@ def plot_maGraph(maData, days_window):
 
 
 def plot_updown_trend(results):
-    datesData = results[0]
-    pricesData = results[1]
-    indexStart = results[2]
-    indexEnd = results[3]
-    sample_days = results[4]
-    trendData = results[5]
+    datesData = [i["Date"] for i in results[0]]
+    pricesData = [i["Close/Last"] for i in results[0]]
+    trendData = [i["Trend"] for i in results[0]]
+    sample_days = results[1]
+    
     fig = go.Figure(
         data=[
             go.Scatter(
-                x=datesData[indexStart:indexEnd],
-                y=pricesData[indexStart:indexEnd],
+                x=datesData,
+                y=pricesData,
                 mode='lines',
                 name='Close Price'
             ),
@@ -87,9 +86,9 @@ def plot_updown_trend(results):
     )
     fig.add_trace(
         go.Scatter(
-            x = datesData[indexEnd-sample_days:indexEnd],
-            y = trendData[:],
-            name = 'trend')
+            x = datesData[-sample_days:],
+            y = trendData[-sample_days:],
+            name = 'Trend')
         )
     # fig.show()
     return fig.to_html(full_html = False)

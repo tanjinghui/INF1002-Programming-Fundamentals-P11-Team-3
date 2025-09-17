@@ -85,8 +85,9 @@ def trendPage():
         trend_window = int(request.form.get("trend_window"))
         results = functions.trend_finder(stockData, start_date, end_date, trend_window)
         trendGraph = visualization.plot_updown_trend(results)
-        return render_template("trend.html", results = results, trendwindow = trend_window, stert_date = start_date, end_date = end_date, trendGraph= trendGraph, errorMsg=results[6], bullOrBear = results[7])
-    return render_template("trend.html", results = None, trendwindow = None, stert_date = start_date, end_date = end_date, trendGraph= None, errorMsg=None, bullOrBear = None)
+        return render_template("trend.html", results = results, trend_window = trend_window, stert_date = start_date, end_date = end_date, trendGraph= trendGraph, errorMsg=results[2], bullOrBear = results[3])
+    else:
+        return render_template("trend.html", results = None, trend_window = None, stert_date = start_date, end_date = end_date, trendGraph= None, errorMsg=None, bullOrBear = None)
 
 
 @app.route("/max_profit", methods = ["GET", "POST"])

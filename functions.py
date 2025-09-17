@@ -39,7 +39,7 @@ def ols_regression(x_data, y_data):
 
     return slope, intercept
 
-def trend_finder(stockData, start_date, end_date, sample_days):
+def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_date: datetime, sample_days: int) -> tuple:
     """
     NOTE:
     assume stockData is sorted by date
@@ -66,34 +66,30 @@ def trend_finder(stockData, start_date, end_date, sample_days):
     if (end_date-start_date).days <= 0:
         errorMsg = "Swapped start and end date"
         start_date,end_date = end_date,start_date
-    while start_date not in stockData['Date']:
-        errorMsg = "Selected closest weekday for start date"
-        start_date -= timedelta(days=1)
-    while end_date not in stockData['Date']:
-        errorMsg = "Selected closest weekday for end date"
-        end_date -= timedelta(days=1)
-        print(f"end_date: {end_date}")
-    print(f"erroMsg: {errorMsg}, start_date: {start_date}, end_date: {end_date}")
-    dates_to_validate_trend_line_len = (start_date + timedelta(idx + 1) for idx in range((end_date - start_date).days))
-    result_to_validate_trend_line_len = sum(1 for day in dates_to_validate_trend_line_len if day.weekday() < 5)
-    if  sample_days > result_to_validate_trend_line_len:
-        sample_days = result_to_validate_trend_line_len//2
+    startDate = binary_search(dates, start_date)
+    endDate = binary_search(dates, end_date)
+    num_weedays_selected = endDate - startDate + 1
+    if  sample_days > num_weedays_selected:
+        sample_days = num_weedays_selected//2
         errorMsg = "Trend window set to default ratio of date range"
-    indexStart = dates.index(start_date)
-    indexEnd = dates.index(end_date)
+    dates = dates[startDate : endDate + 1]
+    prices = prices[startDate : endDate + 1]
+    index = index[startDate : endDate + 1]
     trend,const = ols_regression(
-        index[indexEnd-sample_days : indexEnd],
-        prices[indexEnd-sample_days : indexEnd]
+        index[-sample_days:],
+        prices[-sample_days:]
         )
-    # print(trend)
-    if trend > 0.35:
+    if trend > 0.15:
         bullOrBear = True
-    elif trend < -0.35:
+    elif trend < -0.15:
         bullOrBear = False
     else:
         bullOrBear = None
-    trend_data = [const + (trend*i) for i in index[indexEnd-sample_days:indexEnd]]
-    return([dates, prices, indexStart, indexEnd, sample_days, trend_data, errorMsg, bullOrBear])
+    trend_data = [const + (trend*i) for i in index]
+    result = []
+    for date, price, trend in zip(dates, prices, trend_data):
+        result.append({"Date" : date, "Close/Last" : price, "Trend" : trend})
+    return (result, sample_days, errorMsg, bullOrBear)
 
 # Define a function to calculate the maximum profit from buying and selling stocks
 def max_profit(stockData, start_date, end_date):
@@ -118,20 +114,22 @@ def max_profit(stockData, start_date, end_date):
     dates = [i for i in stockData["Date"]]
     priceLow = [i for i in stockData["Low"]]
     priceHigh = [i for i in stockData["High"]]
+    index = [i for i,v in enumerate(stockData["Date"])]
     errorMsg = None
     if (end_date-start_date).days <= 0:
         errorMsg = "Swapped start and end date"
         start_date,end_date = end_date,start_date
-    while start_date not in stockData['Date']:
-        errorMsg = "Selected closest weekday for start date"
-        start_date -= timedelta(days=1)
-    while end_date not in stockData['Date']:
-        errorMsg = "Selected closest weekday for end date"
-        end_date -= timedelta(days=1)
-    indexStart = dates.index(start_date)
-    indexEnd = dates.index(end_date)
-    dates = dates[indexStart : indexEnd]
-    priceLow, priceHigh = priceLow[indexStart : indexEnd], priceHigh[indexStart : indexEnd]
+    startDate = binary_search(dates, start_date)
+    endDate = binary_search(dates, end_date)
+    num_weedays_selected = endDate - startDate + 1
+    if  sample_days > num_weedays_selected:
+        sample_days = num_weedays_selected//2
+        errorMsg = "Trend window set to default ratio of date range"
+    dates = dates[startDate : endDate + 1]
+    index = index[startDate : endDate + 1]
+    priceHigh = priceHigh[startDate : endDate + 1]
+    priceLow = priceLow[startDate : endDate + 1]
+
     buyDay,sellDay = None, None
 
     # Iterate through the stock prices using a nested loop
