@@ -1,4 +1,5 @@
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
+
 
 def ols_regression(x_data, y_data):
     """
@@ -38,6 +39,7 @@ def ols_regression(x_data, y_data):
     # print(f"Slope: {slope}\nIntercept:{intercept}")
 
     return slope, intercept
+
 
 def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_date: datetime, sample_days: int) -> tuple:
     """
@@ -90,6 +92,7 @@ def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_d
     for date, price, trend in zip(dates, prices, trend_data):
         result.append({"Date" : date, "Close/Last" : price, "Trend" : trend})
     return (result, sample_days, errorMsg, bullOrBear)
+
 
 # Define a function to calculate the maximum profit from buying and selling stocks
 def max_profit(stockData, start_date, end_date):
@@ -165,8 +168,6 @@ def max_profit(stockData, start_date, end_date):
 
     max_profit_amt = sum(transaction["profit"])
 
-
-
     # Return the maximum profit amount
     return [start_date, end_date, max_profit_amt, transaction, errorMsg]
 
@@ -215,6 +216,9 @@ def calc_sma(close_prices: list[float], days_window: int) -> list[float]:
 
 
 def calc_ema(close_prices: list[float], smaData: list[float], days_window: int) -> list[float]:
+    # -------------------------------------------
+    # 1. Builds on from calc_sma, where results from SMA is multiplied by the multiplier to give EMA
+    # -------------------------------------------
     multiplier = 2 / (days_window + 1)
     n = len(smaData)
     ema_prices = [None] * n
@@ -258,7 +262,6 @@ def moving_average(stockData: dict[str, list[object]], start_date: datetime, end
 
 
 def daily_ret(stockData):
-
     dates = stockData["Date"]
     closes = stockData["Close/Last"]
     # Calculate daily returns

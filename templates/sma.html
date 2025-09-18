@@ -10,6 +10,72 @@
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="static/style.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <style>
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-left: 5px;
+        }
+        </style>
+        <script>
+        function checkValidation() {
+            let valid = true;
+
+            document.getElementById("start_error").textContent = "";
+            document.getElementById("end_error").textContent = "";
+            document.getElementById("window_error").textContent = "";
+
+            const startInput = document.getElementById("start_date");
+            const endInput = document.getElementById("end_date");
+            const windowInput = document.getElementById("days_window");
+
+            const startVal = startInput.value;
+            const endVal = endInput.value;
+            const windowVal = windowInput.value;
+
+            const start = new Date(startVal);
+            const end = new Date(endVal);
+            const daysWindow = parseInt(windowVal);
+
+            if (startVal && isNaN(start.getTime())) {
+                document.getElementById("start_error").textContent = "Please select a valid start date.";
+                valid = false;
+            }
+
+            if (endVal && isNaN(end.getTime())) {
+                document.getElementById("end_error").textContent = "Please select a valid end date.";
+                valid = false;
+            }
+
+            if (startVal && endVal && !isNaN(start.getTime()) && !isNaN(end.getTime()) && start > end) {
+                document.getElementById("end_error").textContent = "End date must be after start date.";
+                valid = false;
+            }
+
+            if (windowVal && (daysWindow < 1 || isNaN(daysWindow))) {
+                document.getElementById("window_error").textContent = "Window must be at least 1.";
+                valid = false;
+            } else if (startVal && endVal && !isNaN(start.getTime()) && !isNaN(end.getTime()) && daysWindow > Math.ceil((end - start) / (1000*60*60*24)+1)) {
+                const diffDays = Math.ceil((end - start) / (1000*60*60*24)) + 1;
+                document.getElementById("window_error").textContent =
+                    "Window cannot exceed total days in range (" + diffDays + ").";
+                valid = false;
+            }
+
+            return valid;
+        }
+
+        function validateForm() {
+            return checkValidation();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const inputs = ["start_date", "end_date", "days_window"];
+            inputs.forEach(id => {
+                document.getElementById(id).addEventListener("input", checkValidation);
+            });
+        });
+        </script>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -45,16 +111,19 @@
                         <h1 class="mt-4">Moving Average Calculator</h1>
                         <div class="row">
                             <div class="col-xl-3">
-                                <form method="POST" class="form-group">
+                                <form method="POST" class="form-group" onsubmit="return validateForm()">
                                     <h3>Calculate Moving Averages</h3>
                                     <label for="start_date">Start Date:</label>
-                                    <input type="date" name="start_date" required>
+                                    <input type="date" id="start_date" name="start_date" required>
+                                    <span class="error" id="start_error"></span>
                                     <br>
                                     <label for="end_date">End Date:</label>
-                                    <input type="date" name="end_date" required>
+                                    <input type="date" id="end_date" name="end_date" required>
+                                    <span class="error" id="end_error"></span>
                                     <br>
                                     <label for="days_window">SMA and EMA Window (days):</label>
-                                    <input type="number" name="days_window" min="1" required>
+                                    <input type="number" id="days_window" name="days_window" min="1" placeholder="1" required>
+                                    <span class="error" id="window_error"></span>
                                     <br>
                                     <button type="submit">Calculate</button>
                                 </form>
