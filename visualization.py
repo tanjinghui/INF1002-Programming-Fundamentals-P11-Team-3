@@ -106,8 +106,8 @@ def plot_max_profit(stockData, results):
     lowData = stockData['Low'][indexStart:indexEnd]
     closeData = stockData['Close/Last'][indexStart:indexEnd]
 
-    indexBuy = datesData.index(results[3])
-    indexSell = datesData.index(results[4])
+    # indexBuy = datesData.index(results[3])
+    # indexSell = datesData.index(results[4])
 
     fig = go.Figure(
         data=[go.Candlestick(x=datesData,
@@ -116,7 +116,7 @@ def plot_max_profit(stockData, results):
         low=lowData,
         close=closeData)],
         layout=go.Layout(
-            title_text=f"Max Profit betwween {results[0]} and {results[1]} is ${results[2]}",
+            title_text=f"Max Profit betwween {results[0]} and {results[1]} is $"+"{:.2f}".format(results[2]),
             hovermode='x unified',
             xaxis=dict(
                 title_text='Date',
@@ -130,9 +130,13 @@ def plot_max_profit(stockData, results):
             )
         )
     )
+    print(results[3]['buy_date'])
+    print(results[3]['buy_price'])
+    print(type(results[3]['buy_date']))
+    print(type(results[3]['buy_price']))
     fig.add_trace(go.Scatter(
-        x=[datesData[indexBuy]], 
-        y=[highData[indexBuy]],
+        x=results[3]['buy_date'], 
+        y=results[3]['buy_price'],
         mode = 'markers',
         marker = dict(color='green',
                       symbol = 'diamond',
@@ -141,13 +145,13 @@ def plot_max_profit(stockData, results):
                       )
                     )
     fig.add_trace(go.Scatter(
-        x=[datesData[indexSell]], 
-        y=[highData[indexSell]],
+        x=results[3]['sell_date'], 
+        y=results[3]['sell_price'],
         mode = 'markers',
         marker = dict(color='red',
                       symbol = 'diamond',
                       size = 10),
-                      name = 'Buy Day'
+                      name = 'Sell Day'
                       )
                     )
     # fig.show()

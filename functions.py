@@ -112,43 +112,63 @@ def max_profit(stockData, start_date, end_date):
     # Initialize the maximum profit amount to zero
     max_profit_amt = 0
     dates = [i for i in stockData["Date"]]
-    priceLow = [i for i in stockData["Low"]]
     priceHigh = [i for i in stockData["High"]]
-    index = [i for i,v in enumerate(stockData["Date"])]
+    priceClose = [i for i in stockData["Close/Last"]]
     errorMsg = None
     if (end_date-start_date).days <= 0:
         errorMsg = "Swapped start and end date"
         start_date,end_date = end_date,start_date
     startDate = binary_search(dates, start_date)
     endDate = binary_search(dates, end_date)
-    num_weedays_selected = endDate - startDate + 1
-    if  sample_days > num_weedays_selected:
-        sample_days = num_weedays_selected//2
-        errorMsg = "Trend window set to default ratio of date range"
-    dates = dates[startDate : endDate + 1]
-    index = index[startDate : endDate + 1]
-    priceHigh = priceHigh[startDate : endDate + 1]
-    priceLow = priceLow[startDate : endDate + 1]
 
-    buyDay,sellDay = None, None
+    if len(dates) < 2:
+        return {
+            'total_profit': 0,
+            'transactions': [],
+            'date_range': [start_date, end_date],
+            'error': 'Need at least 2 days for consecutive day trading'
+        }
+    
+    transaction = {
+            'buy_date': [],
+            'sell_date': [],
+            'buy_price': [],
+            'sell_price': [],
+            'profit':[],
+            'is_profitable': []
+        }
+    max_profit_amt = 0
+    dates = dates[startDate:endDate+1]
+    priceHigh = priceHigh[startDate:endDate+1]
+    priceClose = priceClose[startDate:endDate+1]
 
-    # Iterate through the stock prices using a nested loop
-    for i in range(len(priceLow)):
-        # Initialize the profit amount for the current day to zero
-        profit_amt = 0
+    for i in range(len(dates) - 1):
+        buy_price = priceClose[i]    # Buy at close of current day
+        sell_price = priceHigh[i + 1]  # Sell at high of next day
+        profit = sell_price - buy_price
+        transaction['buy_date'].append(dates[i])
+        transaction['sell_date'].append(dates[i+1])
+        transaction['buy_price'].append(buy_price)
+        transaction['sell_price'].append(sell_price)
+        transaction['profit'].append(profit)
+        transaction['is_profitable'].append(profit > 0)
 
-        # Iterate through the subsequent days to find potential profit
-        for j in range(i+1, len(priceHigh)):
-            # Calculate the profit by subtracting the buying price from the selling price
-            profit_amt = priceHigh[j] - priceLow[i]
+    indices = [index for index, value in enumerate(transaction['is_profitable']) if value == False]
 
-            # Update the maximum profit if the current profit is greater, save which dates the stock was bought and sold on.
-            if profit_amt > max_profit_amt:
-                max_profit_amt = profit_amt
-                buyDay, sellDay = dates[i], dates[j]
+    for i in indices[::-1]:
+        transaction['buy_date'].pop(i)
+        transaction['sell_date'].pop(i)
+        transaction['buy_price'].pop(i)
+        transaction['sell_price'].pop(i)
+        transaction['profit'].pop(i)
+        transaction['is_profitable'].pop(i)
+
+    max_profit_amt = sum(transaction["profit"])
+
+
 
     # Return the maximum profit amount
-    return [start_date, end_date, max_profit_amt, buyDay, sellDay, errorMsg]
+    return [start_date, end_date, max_profit_amt, transaction, errorMsg]
 
 
 def binary_search(dates: list[datetime], target: datetime) -> int:
