@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 def ols_regression(x_data, y_data):
@@ -65,6 +65,8 @@ def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_d
     prices = [i for i in stockData["Close/Last"]]
     index = [i for i,v in enumerate(stockData["Date"])]
     errorMsg = None
+    bullOrBear = None
+    result = []
     if (end_date-start_date).days <= 0:
         errorMsg = "Swapped start and end date"
         start_date,end_date = end_date,start_date
@@ -77,18 +79,24 @@ def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_d
     dates = dates[startDate : endDate + 1]
     prices = prices[startDate : endDate + 1]
     index = index[startDate : endDate + 1]
-    trend,const = ols_regression(
-        index[-sample_days:],
-        prices[-sample_days:]
-        )
+    try:
+        trend,const = ols_regression(
+            index[-sample_days:],
+            prices[-sample_days:]
+            )
+    except ValueError as e:
+        trend_data = [None for i in index]
+        errorMsg = str(e)
+        for date, price, trend in zip(dates, prices, trend_data):
+            result.append({"Date" : date, "Close/Last" : price, "Trend" : trend})
+        return (result, sample_days, errorMsg, bullOrBear)
     if trend > 0.15:
         bullOrBear = True
     elif trend < -0.15:
         bullOrBear = False
     else:
-        bullOrBear = None
+        pass
     trend_data = [const + (trend*i) for i in index]
-    result = []
     for date, price, trend in zip(dates, prices, trend_data):
         result.append({"Date" : date, "Close/Last" : price, "Trend" : trend})
     return (result, sample_days, errorMsg, bullOrBear)

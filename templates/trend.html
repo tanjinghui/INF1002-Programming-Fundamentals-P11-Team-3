@@ -47,6 +47,13 @@
                             <div class="col-xl-3">
                                 <form method="POST" class="form-group">
                                     <h3>Settings for Trend</h3>
+                                    <label for="ource">Source:</label>
+                                    <select list="source" name="source" placeholder="Select Stock Ticker" required>
+                                        <option value="LOCAL">LOCAL</option>
+                                        <option value="AAPL">AAPL</option>
+                                        <option value="MSFT">MSFT</option>
+                                        <option value="GOOG">GOOG</option>
+                                    </select>
                                     <label for="start_date">Start Date:</label>
                                     <input type="date" name="start_date" required>
                                     <br>

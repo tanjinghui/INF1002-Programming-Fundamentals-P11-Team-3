@@ -3,6 +3,7 @@ from datetime import datetime,timedelta
 import csv
 import functions
 import visualization
+import yfinance as yf
 
 app = Flask(__name__)
 
@@ -45,9 +46,32 @@ def loadData(csvfile):
 
     return {"Date" : list(dates), "Close/Last" : list(close_prices), "Volume" : list(volume), "Open" : list(open_price), "High" : list(high_price), "Low" : list(low_price)}
 
+def setupTickers(listOfTickers: list[str], start_date: str, end_date: str) -> dict[str:dict]:
+    # assume: start_date, end_date format: "YYYY-MM-DD"
+    try:
+        result = {}
+        data = yf.download(listOfTickers, start = start_date, end = end_date, auto_adjust=True, progress=False)
+        for i in listOfTickers:
+            dates = [v.to_pydatetime() for v in data.index]
+            close_prices = [float(data["Close"][i][v]) for v in data["Close"][i].index]   #float(i["Close/Last"].replace("$", "").strip())
+            volume = [int(data["Volume"][i][v]) for v in data["Volume"][i].index]  #int(i["Volume"])
+            open_price = [float(data["Open"][i][v]) for v in data["Open"][i].index]      #float(i["Open"].replace("$", "").strip())
+            high_price = [float(data["High"][i][v]) for v in data["High"][i].index]      #float(i["High"].replace("$", "").strip())
+            low_price = [float(data["Low"][i][v]) for v in data["Low"][i].index]     #float(i["Low"].replace("$", "").strip())
+            combineSort = sorted(zip(dates, close_prices, volume, open_price, high_price, low_price), key = lambda dates: dates[0])
+            dates, close_prices, volume, open_price, high_price, low_price = zip(*combineSort)
+            result[i] = {"Date" : list(dates), "Close/Last" : list(close_prices), "Volume" : list(volume), "Open" : list(open_price), "High" : list(high_price), "Low" : list(low_price)}
+        return result
+    except Exception as e:
+        print("Error in setupTickers:", e)
+        return None
+    # references:
+    # https://stackoverflow.com/questions/25852044/converting-pandas-tslib-timestamp-to-datetime-python
 
-stockData = loadData("data/apple.csv")
-
+listOfTickers = ["AAPL", "MSFT", "GOOG"]
+csvData = loadData("data/apple.csv")
+stockData = setupTickers(listOfTickers, "2022-01-01", "2025-09-01")
+stockData["LOCAL"] = csvData
 
 @app.route("/")
 def home():
@@ -79,11 +103,17 @@ def trendPage():
     end_date = None
     trend_window = None
     trendGraph = None
+    source = None
     if request.method == "POST":
         start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
         end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
         trend_window = int(request.form.get("trend_window"))
-        results = functions.trend_finder(stockData, start_date, end_date, trend_window)
+        source = request.form.get("source")
+        if  source in listOfTickers + ["LOCAL"]:
+            results = functions.trend_finder(stockData[source], start_date, end_date, trend_window)
+        else:
+            errorMsg = "Error: Invalid stock ticker selected."
+            return render_template("trend.html", results = None, trend_window = None, stert_date = start_date, end_date = end_date, trendGraph= None, errorMsg=errorMsg, bullOrBear = None)
         trendGraph = visualization.plot_updown_trend(results)
         return render_template("trend.html", results = results, trend_window = trend_window, stert_date = start_date, end_date = end_date, trendGraph= trendGraph, errorMsg=results[2], bullOrBear = results[3])
     else:
@@ -99,7 +129,6 @@ def max_profit_Page():
     if request.method == "POST":
         start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
         end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
-#        trend_window = int(request.form.get("trend_window"))
         results = functions.max_profit(stockData, start_date, end_date)
         max_profit_Graph = visualization.plot_max_profit(stockData,results)
         return render_template("max_profit.html", results = results, stert_date = start_date, end_date = end_date, max_profit_Graph= max_profit_Graph, errorMsg=results[4])
