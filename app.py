@@ -85,12 +85,17 @@ def smaPage():
     end_date = None
     days_window = None
     maGraph = None
-
+    source = None
     if request.method == "POST":
         start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
         end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
         days_window = int(request.form.get("days_window"))
-        results = functions.moving_average(stockData, start_date, end_date, days_window)
+        source = request.form.get("source")
+        if source in listOfTickers + ["LOCAL"]:
+            results = functions.moving_average(stockData[source], start_date, end_date, days_window)
+        else:
+            errorMsg = "Error: Invalid stock ticker selected."
+            return render_template("sma.html", results = results, dayswindow = days_window, start_date = start_date, end_date = end_date, maGraph= maGraph)
         maGraph = visualization.plot_maGraph(results, days_window)
 
     return render_template("sma.html", results = results, dayswindow = days_window, start_date = start_date, end_date = end_date, maGraph= maGraph)
@@ -126,10 +131,16 @@ def max_profit_Page():
     start_date = None
     end_date = None
     max_profit_Graph = None
+    source = None
     if request.method == "POST":
         start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
         end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
-        results = functions.max_profit(stockData, start_date, end_date)
+        source = request.form.get("source")
+        if source in listOfTickers + ["LOCAL"]:
+            results = functions.max_profit(stockData[source], start_date, end_date)
+        else:
+            errorMsg = "Error: Invalid stock ticker selected."
+            return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=None)
         max_profit_Graph = visualization.plot_max_profit(stockData,results)
         return render_template("max_profit.html", results = results, stert_date = start_date, end_date = end_date, max_profit_Graph= max_profit_Graph, errorMsg=results[4])
     return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=None)
@@ -141,25 +152,30 @@ def daily_return_Page():
     start_date = None
     end_date = None
     daily_ret_graph = None
-
+    source = None
     if request.method == "POST":
         start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
         end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
-        results = functions.daily_ret(stockData)
-        # Filter results by date range
-        if results and start_date and end_date:
-            # Ensure date in result is datetime, convert if needed
-            filtered = []
-            for row in results:
-                date_val = row["Date"]
-                if isinstance(date_val, str):
-                    try:
-                        date_val = datetime.fromisoformat(date_val)
-                    except Exception:
-                        continue
-                if start_date <= date_val <= end_date:
-                    filtered.append({"Date": date_val, "Daily Return": row["Daily Return"]})
-            results = filtered
+        source = request.form.get("source")
+        if source in listOfTickers + ["LOCAL"]:
+            results = functions.daily_ret(stockData[source])
+            # Filter results by date range
+            if results and start_date and end_date:
+                # Ensure date in result is datetime, convert if needed
+                filtered = []
+                for row in results:
+                    date_val = row["Date"]
+                    if isinstance(date_val, str):
+                        try:
+                            date_val = datetime.fromisoformat(date_val)
+                        except Exception:
+                            continue
+                    if start_date <= date_val <= end_date:
+                        filtered.append({"Date": date_val, "Daily Return": row["Daily Return"]})
+                results = filtered
+        else:
+            errorMsg = "Error: Invalid stock ticker selected."
+            return render_template("daily_ret.html", results = None, start_date = start_date, end_date = end_date, daily_ret_graph= None)
         daily_ret_graph = visualization.plot_daily_ret(results)
 
     return render_template("daily_ret.html", results = results, start_date = start_date, end_date = end_date, daily_ret_graph= daily_ret_graph)
