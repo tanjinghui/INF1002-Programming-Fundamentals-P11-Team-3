@@ -46,6 +46,7 @@ def loadData(csvfile):
 
     return {"Date" : list(dates), "Close/Last" : list(close_prices), "Volume" : list(volume), "Open" : list(open_price), "High" : list(high_price), "Low" : list(low_price)}
 
+
 def setupTickers(listOfTickers: list[str], start_date: str, end_date: str) -> dict[str:dict]:
     # assume: start_date, end_date format: "YYYY-MM-DD"
     try:
@@ -68,10 +69,12 @@ def setupTickers(listOfTickers: list[str], start_date: str, end_date: str) -> di
     # references:
     # https://stackoverflow.com/questions/25852044/converting-pandas-tslib-timestamp-to-datetime-python
 
-listOfTickers = ["AAPL", "MSFT", "GOOG"]
+
+listOfTickers = ["AAPL","MSFT" ,"GOOG" ,"NVDA","AMZN", "TSLA", "META"]
 csvData = loadData("data/apple.csv")
 stockData = setupTickers(listOfTickers, "2022-01-01", "2025-09-01")
 stockData["LOCAL"] = csvData
+
 
 @app.route("/")
 def home():
@@ -95,10 +98,10 @@ def smaPage():
             results = functions.moving_average(stockData[source], start_date, end_date, days_window)
         else:
             errorMsg = "Error: Invalid stock ticker selected."
-            return render_template("sma.html", results = results, dayswindow = days_window, start_date = start_date, end_date = end_date, maGraph= maGraph)
-        maGraph = visualization.plot_maGraph(results, days_window)
+            return render_template("sma.html", results = results, days_window = days_window, start_date = start_date, end_date = end_date, maGraph = maGraph, errorMsg = errorMsg, source = source)
+        maGraph = visualization.plot_maGraph(results, days_window, source)
 
-    return render_template("sma.html", results = results, dayswindow = days_window, start_date = start_date, end_date = end_date, maGraph= maGraph)
+    return render_template("sma.html", results = results, days_window = days_window, start_date = start_date, end_date = end_date, maGraph= maGraph, source = source)
 
 
 @app.route("/trend", methods = ["GET", "POST"])

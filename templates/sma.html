@@ -88,7 +88,7 @@
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             <div class="sb-sidenav-menu-heading">Core Functionalities</div>
-                            <a class="nav-link" href="/index.html">
+                            <a class="nav-link" href="/">
                                 Home
                             </a> 
                             <a class="nav-link" href="/sma">
@@ -121,6 +121,7 @@
                                         <option value="AAPL">AAPL</option>
                                         <option value="MSFT">MSFT</option>
                                         <option value="GOOG">GOOG</option>
+                                        <option value="NVDA">NVDA</option>
                                     </select>
                                     <label for="start_date">Start Date:</label>
                                     <input type="date" id="start_date" name="start_date" required>
@@ -143,7 +144,7 @@
                                 {% endif %}
 
                                 {% if results %}
-                                    <h3>Results for {{ days_window }}-Day SMA and EMA ({{ start_date.date() }} → {{ end_date.date() }})</h3>
+                                    <h3>{{ source }} Results for {{ days_window }}-Day SMA and EMA ({{ start_date.date() }} → {{ end_date.date() }})</h3>
                                     <table class = "table table-striped">
                                         <tr>
                                             <th>Date</th>

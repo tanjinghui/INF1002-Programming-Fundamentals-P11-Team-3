@@ -253,7 +253,6 @@ def moving_average(stockData: dict[str, list[object]], start_date: datetime, end
 
     filtered_dates = dates[startDate : endDate + 1]
     filtered_prices = close_prices[startDate : endDate + 1]
-
     # -------------------------------------------
     # 4. Calculate SMA and EMA
     # -------------------------------------------
@@ -265,7 +264,7 @@ def moving_average(stockData: dict[str, list[object]], start_date: datetime, end
     # -------------------------------------------
     maData = []
     for date, price, sma, ema in zip(filtered_dates, filtered_prices, smaResults, emaResults):
-        maData.append({"Date" : date, "Close/Last" : price, "SMA" : sma, "EMA" : ema})
+        maData.append({"Date" : date, "Close/Last" : round(price, 2), "SMA" : sma, "EMA" : ema})
     return maData
 
 

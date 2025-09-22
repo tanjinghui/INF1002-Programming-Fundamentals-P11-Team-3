@@ -1,7 +1,7 @@
 import plotly.graph_objects as go
 from datetime import datetime
 
-def plot_maGraph(maData, days_window):
+def plot_maGraph(maData, days_window, source):
     dates = [i["Date"] for i in maData]
     prices = [i["Close/Last"] for i in maData]
     sma = [i["SMA"] for i in maData]
@@ -34,7 +34,7 @@ def plot_maGraph(maData, days_window):
     # 1.5 Customize layout of the graph with hover over interaction, namings, and information
     # -------------------------------------------
     layout=go.Layout(
-        title_text="Daily Closing Price vs SMA vs EMA",
+        title_text=f"Daily Closing Price vs SMA vs EMA for {source}",
         hovermode='x unified',
         xaxis=dict(
             title_text='Date',
