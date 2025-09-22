@@ -54,6 +54,45 @@ def plot_maGraph(maData, days_window, source):
     return fig.to_html(full_html = False)
 
 
+def plot_indexGraph(stockData, source):
+    dates = stockData["Date"]
+    prices = stockData["Close/Last"]
+    # -------------------------------------------
+    # 1. Create line plots for Close/Last
+    # -------------------------------------------
+    fig = go.Figure(
+    data=[
+        go.Scatter(
+            x=dates,
+            y=prices,
+            mode='lines',
+            name='Close Price'
+        ),
+    ],
+    # -------------------------------------------
+    # 1.5 Customize layout of the graph with hover over interaction, namings, and information
+    # -------------------------------------------
+    layout=go.Layout(
+        title_text=f"Daily Closing Price for {source}",
+        hovermode='x unified',
+        xaxis=dict(
+            title_text='Date',
+            unifiedhovertitle=dict(
+                text='<b>%{x|%A, %B %d, %Y}</b>'
+            )
+        ),
+        yaxis=dict(
+            title_text='Price (USD)',
+            tickprefix='$'
+        )
+    )
+)
+    # -------------------------------------------
+    # 2. Show the graph
+    # -------------------------------------------
+    return fig.to_html(full_html = False)
+
+
 def plot_updown_trend(results):
     datesData = [i["Date"] for i in results[0]]
     pricesData = [i["Close/Last"] for i in results[0]]

@@ -70,15 +70,17 @@ def setupTickers(listOfTickers: list[str], start_date: str, end_date: str) -> di
     # https://stackoverflow.com/questions/25852044/converting-pandas-tslib-timestamp-to-datetime-python
 
 
-listOfTickers = ["AAPL","MSFT" ,"GOOG" ,"NVDA","AMZN", "TSLA", "META"]
+listOfTickers = ["AAPL" ,"MSFT" ,"GOOG" ,"NVDA" ,"AMZN", "TSLA", "META"]
 csvData = loadData("data/apple.csv")
 stockData = setupTickers(listOfTickers, "2022-01-01", "2025-09-01")
 stockData["LOCAL"] = csvData
 
 
-@app.route("/")
+@app.route("/", methods = ["GET"])
 def home():
-    return render_template("index.html")
+    source = request.args.get("source", "NVDA")
+    indexGraph = visualization.plot_indexGraph(stockData[source], source)
+    return render_template("index.html", indexGraph = indexGraph, source = source)
 
 
 @app.route("/sma", methods = ["GET", "POST"])

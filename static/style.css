@@ -330,6 +330,10 @@ label {
   display: inline-block;
 }
 
+select {
+  display: inline-block;
+}
+
 button {
   border-radius: 0;
 }
