@@ -48,10 +48,10 @@
                         <h1 class="mt-4">TrendFinder</h1>
                         <div class="row">
                             <div class="col-xl-3">
-                                <form method="POST" class="form-group">
+                                <form method="POST" class="form-group" id="DAForm">
                                     <h3>Settings for Trend</h3>
                                     <label for="source">Source:</label>
-                                    <select class="form-select" list="source" name="source" placeholder="Select Stock Ticker" required>
+                                    <select class="form-select" list="source" name="source" id="source" placeholder="Select Stock Ticker" required>
                                         <option value="LOCAL">LOCAL</option>
                                         <option value="AAPL">AAPL</option>
                                         <option value="MSFT">MSFT</option>
@@ -60,55 +60,78 @@
                                     </select>
                                     <br>
                                     <label for="start_date">Start Date:</label>
-                                    <input type="date" name="start_date" required>
+                                    <input type="date" name="start_date" id="start_date" required>
                                     <br>
                                     <label for="end_date">End Date:</label>
-                                    <input type="date" name="end_date" required>
+                                    <input type="date" name="end_date" id="end_date" required>
                                     <br>
                                     <label for="trend_window">Trend Window (days):</label>
-                                    <input type="number" name="trend_window" min="1" required>
+                                    <input type="number" name="trend_window" id="trend_window" min="1" required>
                                     <br>
-                                    <button type="submit">Calculate</button>
+                                    <button type="submit" id="update-button">Calculate</button>
                                 </form>
+                            </div>
+                            <div class="col-xl-12" id="dynamic-section">
+                                <!--Only show if not None-->
+                                {% if trendGraph %}
+                                    {{ trendGraph | safe}}
+                                {% endif %}
+                                {% if bullOrBear %}
+                                    <h3 style="background-color:green; padding-top: 35px; padding-bottom:35px; text-align:center;">
+                                        The trend indicates a Bull Market.
+                                        (Upwards Trend for last {{trend_window | safe}} days)
+                                    </h3>
+                                {% elif bullOrBear == False %}
+                                    <h3 style="background-color:red; padding-top: 35px; padding-bottom:35px; text-align:center;">
+                                        The trend indicates a Bear Market.
+                                        (Downwards Trend for last {{trend_window | safe}} days)
+                                    </h3>
+                                {% elif bullOrBear == None and results %}
+                                    <!-- bullOrBear init is None, so need check if anything was calculated in order to only show when submitted -->
+                                    <h3 style="background-color:orange; padding-top: 35px; padding-bottom:35px; text-align:center;">
+                                        The trend is Neutral.
+                                        (Flat Trend for last {{trend_window | safe}} days)
+                                    </h3>
+                                {% endif %}
                                 <!--Only show if not None-->
                                 {% if errorMsg %}
                                     {{ errorMsg | safe}}
                                 {% endif %}
                             </div>
-                            <div class="col-xl-8">
-                                <!--Only show if not None-->
-                                {% if trendGraph %}
-                                    {{ trendGraph | safe}}
-                                {% endif %}
-                            </div>
                         </div>
-                        <div class="row", style="text-align:center;">
-                                {% if bullOrBear %}
-                                    <h3 style="background-color:green; padding-top: 50px; padding-bottom:50px;">
-                                        The trend indicates a Bull Market. (Upwards Trend for last {{trend_window | safe}} days)
-                                    </h3>
-                                {% elif bullOrBear == False %}
-                                    <h3 style="background-color:red; padding-top: 50px; padding-bottom:50px;">
-                                        The trend indicates a Bear Market. (Downwards Trend for last {{trend_window | safe}} days)
-                                    </h3>
-                                {% elif bullOrBear == None and results %}
-                                    <!-- bullOrBear init is None, so need check if anything was calculated in order to only show when submitted -->
-                                    <h3 style="background-color:orange; padding-top: 50px; padding-bottom:50px;">
-                                        The trend is Neutral. (Flat Trend for last {{trend_window | safe}} days)
-                                    </h3>
-                                {% endif %}
-                        </div>
-                    </div>
+                        
                     </div>
                 </main>
             </div>
         </div>
+        
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="js/scripts.js"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
         <script src="assets/demo/chart-area-demo.js"></script>
         <script src="assets/demo/chart-bar-demo.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
         <script src="js/datatables-simple-demo.js"></script>
+        <script>
+            $('#DAForm').submit(function(event) {
+                //stop form reloading page
+                event.preventDefault();
+                // getting form data to a variable
+                var formData = $(this).serialize();
+                // AJAX call will go here
+                $.ajax({
+                    url: '/trend_partial',
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        $('#dynamic-section').html(response);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+    });
+        </script>
     </body>
 </html>

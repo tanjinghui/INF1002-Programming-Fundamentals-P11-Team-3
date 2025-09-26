@@ -1,0 +1,28 @@
+                            <div class="col-xl-12" id="dynamic-section">
+                                <!--Only show if not None-->
+                                {% if trendGraph %}
+                                    {{ trendGraph | safe}}
+                                {% endif %}
+                                {% if bullOrBear %}
+                                    <h3 style="background-color:green; padding-top: 35px; padding-bottom:35px; text-align:center;">
+                                        The trend indicates a Bull Market.
+                                        (Upwards Trend for last {{trend_window | safe}} days)
+                                    </h3>
+                                {% elif bullOrBear == False %}
+                                    <h3 style="background-color:red; padding-top: 35px; padding-bottom:35px; text-align:center;">
+                                        The trend indicates a Bear Market.
+                                        (Downwards Trend for last {{trend_window | safe}} days)
+                                    </h3>
+                                {% elif bullOrBear == None and results %}
+                                    <!-- bullOrBear init is None, so need check if anything was calculated in order to only show when submitted -->
+                                    <h3 style="background-color:orange; padding-top: 35px; padding-bottom:35px; text-align:center;">
+                                        The trend is Neutral.
+                                        (Flat Trend for last {{trend_window | safe}} days)
+                                    </h3>
+                                {% endif %}
+                                <!--Only show if not None-->
+                                {% if errorMsg %}
+                                    {{ errorMsg | safe}}
+                                {% endif %}
+                            </div>
+                        

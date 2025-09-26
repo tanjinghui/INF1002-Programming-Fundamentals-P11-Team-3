@@ -70,7 +70,7 @@ def setupTickers(listOfTickers: list[str], start_date: str, end_date: str) -> di
     # https://stackoverflow.com/questions/25852044/converting-pandas-tslib-timestamp-to-datetime-python
 
 
-listOfTickers = ["AAPL" ,"MSFT" ,"GOOG" ,"NVDA" ,"AMZN", "TSLA", "META"]
+listOfTickers = ["AAPL"]# ,"MSFT" ,"GOOG" ,"NVDA" ,"AMZN", "TSLA", "META"]
 csvData = loadData("data/apple.csv")
 stockData = setupTickers(listOfTickers, "2022-01-01", "2025-09-01")
 if stockData:
@@ -112,27 +112,29 @@ def smaPage():
 
 @app.route("/trend", methods = ["GET", "POST"])
 def trendPage():
-    results = None
-    start_date = None
-    end_date = None
-    trend_window = None
-    trendGraph = None
-    source = None
-    if request.method == "POST":
-        start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
-        end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
-        trend_window = int(request.form.get("trend_window"))
-        source = request.form.get("source")
-        if  source in listOfTickers + ["LOCAL"]:
-            results = functions.trend_finder(stockData[source], start_date, end_date, trend_window)
-        else:
-            errorMsg = "Error: Invalid stock ticker selected."
-            return render_template("trend.html", results = None, trend_window = None, stert_date = start_date, end_date = end_date, trendGraph= None, errorMsg=errorMsg, bullOrBear = None)
-        trendGraph = visualization.plot_updown_trend(results)
-        return render_template("trend.html", results = results, trend_window = trend_window, stert_date = start_date, end_date = end_date, trendGraph= trendGraph, errorMsg=results[2], bullOrBear = results[3])
-    else:
-        return render_template("trend.html", results = None, trend_window = None, stert_date = start_date, end_date = end_date, trendGraph= None, errorMsg=None, bullOrBear = None)
+    return render_template("trend.html", results = None, trend_window = None, stert_date = None, end_date = None, trendGraph= None, errorMsg=None, bullOrBear = None)
 
+@app.route("/trend_partial", methods=['POST'])
+def trend_partial():
+    params = {
+        "source" : request.values.get("source"),
+        "start_date" : request.values.get("start_date"),
+        "end_date" : request.values.get("end_date"),
+        "trend_window" : request.values.get("trend_window")
+    }
+    results = None
+    trendGraph = None
+    start_date = datetime.strptime(params["start_date"], "%Y-%m-%d")
+    end_date = datetime.strptime(params["end_date"], "%Y-%m-%d")
+    trend_window = int(params["trend_window"])
+    source = params["source"]
+    if  source in listOfTickers + ["LOCAL"]:
+        results = functions.trend_finder(stockData[source], start_date, end_date, trend_window)
+    else:
+        errorMsg = "Error: Invalid stock ticker selected."
+        return render_template("trend_partial.html", results = None, trend_window = None, stert_date = start_date, end_date = end_date, trendGraph= None, errorMsg=errorMsg, bullOrBear = None)
+    trendGraph = visualization.plot_updown_trend(results)
+    return render_template("trend_partial.html", results = results, trend_window = trend_window, stert_date = start_date, end_date = end_date, trendGraph= trendGraph, errorMsg=results[2], bullOrBear = results[3])
 
 @app.route("/max_profit", methods = ["GET", "POST"])
 def max_profit_Page():
