@@ -70,7 +70,7 @@ def setupTickers(listOfTickers: list[str], start_date: str, end_date: str) -> di
     # https://stackoverflow.com/questions/25852044/converting-pandas-tslib-timestamp-to-datetime-python
 
 
-listOfTickers = ["AAPL" ,"MSFT" ,"GOOG" ,"NVDA" ,"AMZN", "TSLA", "META"]
+listOfTickers = ["AAPL"]# ,"MSFT" ,"GOOG" ,"NVDA" ,"AMZN", "TSLA", "META"]
 csvData = loadData("data/apple.csv")
 stockData = setupTickers(listOfTickers, "2022-01-01", "2025-09-01")
 if stockData:
@@ -150,7 +150,7 @@ def max_profit_Page():
         else:
             errorMsg = "Error: Invalid stock ticker selected."
             return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=None)
-        max_profit_Graph = visualization.plot_max_profit(stockData,results)
+        max_profit_Graph = visualization.plot_max_profit(stockData[source],results)
         return render_template("max_profit.html", results = results, stert_date = start_date, end_date = end_date, max_profit_Graph= max_profit_Graph, errorMsg=results[4])
     return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=None)
 
