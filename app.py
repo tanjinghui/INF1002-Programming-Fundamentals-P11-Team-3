@@ -73,7 +73,11 @@ def setupTickers(listOfTickers: list[str], start_date: str, end_date: str) -> di
 listOfTickers = ["AAPL" ,"MSFT" ,"GOOG" ,"NVDA" ,"AMZN", "TSLA", "META"]
 csvData = loadData("data/apple.csv")
 stockData = setupTickers(listOfTickers, "2022-01-01", "2025-09-01")
-stockData["LOCAL"] = csvData
+if stockData:
+    stockData["LOCAL"] = csvData
+else:
+    print("Something went horribly wrong in loading of data. Abort Abort Abort")
+    raise SystemExit
 
 
 @app.route("/", methods = ["GET"])
