@@ -1,5 +1,5 @@
 import plotly.graph_objects as go
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def plot_maGraph(maData, days_window, source):
     dates = [i["Date"] for i in maData]
@@ -54,9 +54,20 @@ def plot_maGraph(maData, days_window, source):
     return fig.to_html(full_html = False)
 
 
-def plot_indexGraph(stockData, source):
+def plot_indexGraph(stockData, source, date_filter):
     dates = stockData["Date"]
     prices = stockData["Close/Last"]
+
+    latest_date = max(dates)
+    if isinstance(date_filter, str) and date_filter.lower() == "all":
+        filtered = list(zip(dates, prices))
+    else:
+        date_filter = latest_date - timedelta(days=date_filter)
+        filtered = [(d, p) for d, p in zip(dates, prices) if d >= date_filter]
+
+    dates, prices = zip(*filtered) if filtered else ([], [])
+
+    color = '#05f746' if prices and prices[-1] >= prices[0] else '#f70505'
     # -------------------------------------------
     # 1. Create line plots for Close/Last
     # -------------------------------------------
@@ -66,7 +77,9 @@ def plot_indexGraph(stockData, source):
             x=dates,
             y=prices,
             mode='lines',
-            name='Close Price'
+            name='Close Price',
+            line=dict(color=color),
+            hovertemplate='%{y:.2f}<extra></extra>'
         ),
     ],
     # -------------------------------------------

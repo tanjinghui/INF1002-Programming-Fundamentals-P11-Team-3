@@ -36,3 +36,5 @@ coverage.xml
 # Mac / Linux system files
 .DS_Store
 *.swp
+__pycache__/visualization.cpython-313.pyc
+__pycache__/visualization.cpython-313.pyc

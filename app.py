@@ -83,8 +83,14 @@ else:
 @app.route("/", methods = ["GET"])
 def home():
     source = request.args.get("source", "NVDA")
-    indexGraph = visualization.plot_indexGraph(stockData[source], source)
-    return render_template("index.html", indexGraph = indexGraph, source = source)
+    date_filter = request.args.get("date_filter", "30")
+    if date_filter.lower() != "all":
+        try:
+            date_filter = int(date_filter)
+        except ValueError:
+            date_filter = 30
+    indexGraph = visualization.plot_indexGraph(stockData[source], source, date_filter)
+    return render_template("index.html", indexGraph = indexGraph, source = source, date_filter = date_filter)
 
 
 @app.route("/sma", methods = ["GET", "POST"])

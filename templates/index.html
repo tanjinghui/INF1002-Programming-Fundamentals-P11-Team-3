@@ -70,6 +70,14 @@
                                 {{ indexGraph | safe }}
                             {% endif %}
                         </div>
+                        <div class="d-grid gap-2 d-md-block">
+                            <a class="btn btn-outline-primary" href="/?source={{ source }}&date_filter=30">1M</a>
+                            <a class="btn btn-outline-primary" href="/?source={{ source }}&date_filter=90">3M</a>
+                            <a class="btn btn-outline-primary" href="/?source={{ source }}&date_filter=180">6M</a>
+                            <a class="btn btn-outline-primary" href="/?source={{ source }}&date_filter=365">1Y</a>
+                            <a class="btn btn-outline-primary" href="/?source={{ source }}&date_filter=all">All</a>
+                        </div>
+                        </div>
                     </div>
                 </main>
             </div>
