@@ -54,15 +54,16 @@
                         <br>
                         <br>
                         <div class="container-fluid px-4">
-                            <h5 class="text-start">Largest Companies</h5>
-                            <div class="d-grid gap-2 d-md-block">
-                            <a class="btn btn-outline-primary" href="/?source=AAPL">Apple</a>
-                            <a class="btn btn-outline-primary" href="/?source=MSFT">Microsoft</a>
-                            <a class="btn btn-outline-primary" href="/?source=GOOG">Alphabet</a>
-                            <a class="btn btn-outline-primary" href="/?source=NVDA">Nvidia</a>
-                            <a class="btn btn-outline-primary" href="/?source=AMZN">Amazon</a>
-                            <a class="btn btn-outline-primary" href="/?source=TSLA">Tesla</a>
-                            <a class="btn btn-outline-primary" href="/?source=META">Meta</a>
+                            <h5 class="text-center">Largest Companies</h5>
+                            <br/>
+                            <div class="d-flex flex-wrap justify-content-center gap-2">
+                            <a class="btn btn-outline-primary btn-lg me-5" href="/?source=AAPL">Apple</a>
+                            <a class="btn btn-outline-primary btn-lg me-5" href="/?source=MSFT">Microsoft</a>
+                            <a class="btn btn-outline-primary btn-lg me-5" href="/?source=GOOG">Alphabet</a>
+                            <a class="btn btn-outline-primary btn-lg me-5" href="/?source=NVDA">Nvidia</a>
+                            <a class="btn btn-outline-primary btn-lg me-5" href="/?source=AMZN">Amazon</a>
+                            <a class="btn btn-outline-primary btn-lg me-5" href="/?source=TSLA">Tesla</a>
+                            <a class="btn btn-outline-primary btn-lg me-5" href="/?source=META">Meta</a>
                             </div>
                         </div>
                         <div class="container-fluid px-4">
@@ -70,7 +71,7 @@
                                 {{ indexGraph | safe }}
                             {% endif %}
                         </div>
-                        <div class="d-grid gap-2 d-md-block">
+                        <div class="<div class="d-flex gap-2 mt-3" style="margin-left: 6rem;">
                             <a class="btn btn-outline-primary" href="/?source={{ source }}&date_filter=30">1M</a>
                             <a class="btn btn-outline-primary" href="/?source={{ source }}&date_filter=90">3M</a>
                             <a class="btn btn-outline-primary" href="/?source={{ source }}&date_filter=180">6M</a>
