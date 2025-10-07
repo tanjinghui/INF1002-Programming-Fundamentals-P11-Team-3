@@ -6,10 +6,62 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Daily Returns / Stock Analysis</title>
+        <title>Moving Average/ Stock Analysis</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="static/style.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <style>
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-left: 5px;
+        }
+        </style>
+        <script>
+        function checkValidation() {
+            let valid = true;
+
+            document.getElementById("start_error").textContent = "";
+            document.getElementById("end_error").textContent = "";
+
+            const startInput = document.getElementById("start_date");
+            const endInput = document.getElementById("end_date");
+
+            const startVal = startInput.value;
+            const endVal = endInput.value;
+
+            const start = new Date(startVal);
+            const end = new Date(endVal);
+
+            if (startVal && isNaN(start.getTime())) {
+                document.getElementById("start_error").textContent = "Please select a valid start date.";
+                valid = false;
+            }
+
+            if (endVal && isNaN(end.getTime())) {
+                document.getElementById("end_error").textContent = "Please select a valid end date.";
+                valid = false;
+            }
+
+            if (startVal && endVal && !isNaN(start.getTime()) && !isNaN(end.getTime()) && start > end) {
+                document.getElementById("end_error").textContent = "End date must be after start date.";
+                valid = false;
+            }
+
+            return valid;
+        }
+
+        function validateForm() {
+            return checkValidation();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const inputs = ["start_date", "end_date"];
+            inputs.forEach(id => {
+                document.getElementById(id).addEventListener("input", checkValidation);
+            });
+        })
+        </script>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -39,7 +91,7 @@
                             </a>
                             <a class="nav-link" href="/range">
                                 Range Finder
-                            </a>
+                            </a>   
                         </div>
                     </div>
                 </nav>
@@ -47,11 +99,11 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Daily Returns Calculator</h1>
+                        <h1 class="mt-4">Range Finder</h1>
                         <div class="row">
                             <div class="col-xl-3">
-                                <form method="POST" class="form-group">
-                                    <h3>Calculate Daily Returns</h3>
+                                <form method="POST" class="form-group" onsubmit="return validateForm()">
+                                    <h3>Calculate Range Max and Average</h3>
                                     <label for="source">Source:</label>
                                     <select class="form-select" list="source" name="source" placeholder="Select Stock Ticker" required>
                                         <option value="LOCAL">LOCAL</option>
@@ -65,41 +117,52 @@
                                     </select>
                                     <br>
                                     <label for="start_date">Start Date:</label>
-                                    <input type="date" name="start_date" required>
+                                    <input type="date" id="start_date" name="start_date" required>
+                                    <span class="error" id="start_error"></span>
                                     <br>
                                     <label for="end_date">End Date:</label>
-                                    <input type="date" name="end_date" required>
+                                    <input type="date" id="end_date" name="end_date" required>
+                                    <span class="error" id="end_error"></span>
                                     <br>
                                     <button type="submit">Calculate</button>
                                 </form>
                             </div>
-                            <div class="col-xl-4">
-                                {% if results %}
-                                    <h3>Daily Returns ({{ start_date.date() }} → {{ end_date.date() }})</h3>
+                            <div class="col-xl-8">
+                                {% if average and max_value %}
+                                <div class="card mb-4 shadow-sm border-primary">
+                                    <div class="card-body text-center">
+                                        <h4 class="card-title text-primary">Range Results</h4>
+                                        <p class="mb-1"><strong>Average Closing Price:</strong> 
+                                            <span class="text-success">${{ "%.2f"|format(average) }}</span>
+                                        </p>
+                                        <p class="mb-0"><strong>Maximum Closing Price:</strong> 
+                                            <span class="text-danger">${{ "%.2f"|format(max_value) }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if errorMsg %}
+                                    <div class="alert alert-danger" role="alert">
+                                        {{ errorMsg }}
+                                    </div>
+                                {% endif %}
+                                {% if rows %}
+                                    <h3>{{ source }} Chart for ({{ start_date.date() }} → {{ end_date.date() }})</h3>
                                     <table class = "table table-striped">
                                         <tr>
                                             <th>Date</th>
-                                            <th>Daily Return</th>
+                                            <th>Close Price</th>
                                         </tr>
-                                    {% for i in results %}
+
+                                    {% for i in rows %}
                                         <tr>
-                                            <td>{{ i["Date"].strftime("%Y-%m-%d") }}</td>
-                                            <td>
-                                                {% if i["Daily Return"] is not none %}
-                                                    {{ "%.2f"|format(i["Daily Return"] * 100) }}%
-                                                {% else %}
-                                                    -
-                                                {% endif %}
-                                            </td>
+                                            <td>{{ i[0].strftime("%Y-%m-%d") }}</td>
+                                            <td>${{ "%.2f"|format(i[1]) }}</td>
                                         </tr>
                                     {% endfor %}
+
                                     </table>
                                     
-                                {% endif %} 
-                            </div>
-                            <div class="col-xl-4">
-                                {% if daily_ret_graph %}
-                                    {{ daily_ret_graph | safe }}
                                 {% endif %}
                             </div>
                         </div>

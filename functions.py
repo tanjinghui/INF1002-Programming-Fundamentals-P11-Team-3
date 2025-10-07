@@ -268,6 +268,72 @@ def moving_average(stockData: dict[str, list[object]], start_date: datetime, end
     return maData
 
 
+class SegmentTree:
+    # -------------------------------------------
+    # 1. Segment Tree data structure to allow range queries for average and max in O(log n) time
+    # -------------------------------------------
+    def __init__(self, stockData: dict[str, list[object]]):
+        self.n = len(stockData)
+        self.sum_tree = [0] * (4 * self.n)
+        self.max_tree = [0] * (4 * self.n)
+        self.build_sum_tree(stockData, 0, 0, self.n - 1)
+        self.build_max_tree(stockData, 0, 0, self.n - 1)
+
+    # -------------------------------------------
+    # 2. Build the segment tree recursively, where each node represents the sum of a segment
+    # -------------------------------------------
+    def build_sum_tree(self, stockData, node, left, right):
+        if left == right: 
+            self.sum_tree[node] = stockData[left]
+        else:
+            mid = (left + right) // 2
+            self.build_sum_tree(stockData, 2 * node + 1, left, mid)
+            self.build_sum_tree(stockData, 2 * node + 2, mid + 1, right)
+            self.sum_tree[node] = self.sum_tree[2 * node + 1] + self.sum_tree[2 * node + 2]
+
+    # -------------------------------------------
+    # 3. Calculate range sum and average using the segment tree
+    # -------------------------------------------
+    def range_sum(self, node, left, right, query_left, query_right):
+        if query_right < left or query_left > right:
+            return 0
+        if query_left <= left and right <= query_right:
+            return self.sum_tree[node]
+        mid = (left + right) // 2
+        left_sum = self.range_sum(2 * node + 1, left, mid, query_left, query_right)
+        right_sum = self.range_sum(2 * node + 2, mid + 1, right, query_left, query_right)
+        return left_sum + right_sum
+    
+    def range_average(self, start_date, end_date):
+        total_sum = self.range_sum(0, 0, self.n - 1, start_date, end_date)
+        return total_sum / (end_date - start_date + 1)
+    
+    # -------------------------------------------
+    # 4. Build another segment tree for range max queries
+    # -------------------------------------------
+    def build_max_tree(self, stockData, node, left, right):
+        if left == right:
+            self.max_tree[node] = stockData[left]
+        else:
+            mid = (left + right) // 2
+            self.build_max_tree(stockData, 2 * node + 1, left, mid)
+            self.build_max_tree(stockData, 2 * node + 2, mid + 1, right)
+            self.max_tree[node] = max(self.max_tree[2 * node + 1], self.max_tree[2 * node + 2])
+
+    def call_range_max(self, node, left, right, query_left, query_right):
+        if query_right < left or query_left > right:
+            return float('-inf')
+        if query_left <= left and right <= query_right:
+            return self.max_tree[node]
+        mid = (left + right) // 2
+        left_max = self.call_range_max(2 * node + 1, left, mid, query_left, query_right)
+        right_max = self.call_range_max(2 * node + 2, mid + 1, right, query_left, query_right)
+        return max(left_max, right_max)
+    
+    def range_max(self, start_date, end_date):
+        return self.call_range_max(0, 0, self.n - 1, start_date, end_date)
+    
+
 def daily_ret(stockData):
     dates = stockData["Date"]
     closes = stockData["Close/Last"]

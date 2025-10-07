@@ -72,9 +72,12 @@ def setupTickers(listOfTickers: list[str], start_date: str, end_date: str) -> di
 
 listOfTickers = ["AAPL" ,"MSFT" ,"GOOG" ,"NVDA" ,"AMZN", "TSLA", "META"]
 csvData = loadData("data/apple.csv")
-stockData = setupTickers(listOfTickers, "2022-01-01", "2025-09-01")
+stockData = setupTickers(listOfTickers, "2022-01-01", "2025-10-01")
+segmentTrees = {}
 if stockData:
     stockData["LOCAL"] = csvData
+    for ticker in listOfTickers + ["LOCAL"]:
+        segmentTrees[ticker] = functions.SegmentTree(stockData[ticker]["Close/Last"])
 else:
     print("Something went horribly wrong in loading of data. Abort Abort Abort")
     raise SystemExit
@@ -93,6 +96,33 @@ def home():
     return render_template("index.html", indexGraph = indexGraph, source = source, date_filter = date_filter)
 
 
+@app.route("/range", methods = ["GET", "POST"])
+def rangePage():
+    start_date = None
+    end_date = None
+    average = None
+    max_value = None
+    source = None
+    errorMsg = None
+    rows = None
+    if request.method == "POST":
+        start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
+        end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
+        source = request.form.get("source")
+        if source in listOfTickers + ["LOCAL"]:
+            start_date_index = functions.binary_search(stockData[source]["Date"], start_date)
+            end_date_index = functions.binary_search(stockData[source]["Date"], end_date)
+            average = segmentTrees[source].range_average(start_date_index, end_date_index)
+            max_value = segmentTrees[source].range_max(start_date_index, end_date_index)
+            dates = stockData[source]["Date"][start_date_index:end_date_index + 1]
+            close_prices = stockData[source]["Close/Last"][start_date_index:end_date_index + 1]
+            rows = zip(dates, close_prices)
+        else:
+            errorMsg = "Error: Invalid stock ticker selected."
+            return render_template("range.html", start_date = start_date, end_date = end_date, average = average, max_value = max_value, errorMsg = errorMsg, source = source, rows = rows)
+    return render_template("range.html", start_date = start_date, end_date = end_date, average = average, max_value = max_value, errorMsg = errorMsg, source = source, rows = rows)
+
+
 @app.route("/sma", methods = ["GET", "POST"])
 def smaPage():
     results = None
@@ -101,6 +131,7 @@ def smaPage():
     days_window = None
     maGraph = None
     source = None
+    errorMsg = None
     if request.method == "POST":
         start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
         end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
