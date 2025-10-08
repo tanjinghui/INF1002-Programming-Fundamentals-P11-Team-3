@@ -101,18 +101,30 @@ def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_d
             prices[-sample_days:]
             )
     except ValueError as e:
+        # -------------------------------------------
+        # return some value in case of error so code will still present something
+        # -------------------------------------------
         trend_data = [None for i in index]
         errorMsg = str(e)
         for date, price, trend in zip(dates, prices, trend_data):
             result.append({"Date" : date, "Close/Last" : price, "Trend" : trend})
         return (result, sample_days, errorMsg, bullOrBear)
+    # -------------------------------------------
+    # prepare bullish or bearish trend indicator, 0.15 was arbitrary, decided by Programmer
+    # -------------------------------------------
     if trend > 0.15:
         bullOrBear = True
     elif trend < -0.15:
         bullOrBear = False
     else:
         bullOrBear = None
+    # -------------------------------------------
+    # compute actual price for trend line graph points 
+    # -------------------------------------------
     trend_data = [const + (trend*i) for i in index]
+    # -------------------------------------------
+    # Prepare data for return
+    # -------------------------------------------
     for date, price, trend in zip(dates, prices, trend_data):
         result.append({"Date" : date, "Close/Last" : price, "Trend" : trend})
     return (result, sample_days, errorMsg, bullOrBear)
