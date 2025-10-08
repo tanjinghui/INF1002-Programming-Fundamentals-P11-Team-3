@@ -236,11 +236,17 @@ def max_profit_Page():
 
 @app.route("/daily_return", methods = ["GET", "POST"])
 def daily_return_Page():
+    # -------------------------------------------
+    #initialize base page ready for ajax
+    # -------------------------------------------
     results = None
     start_date = None
     end_date = None
     daily_ret_graph = None
     source = None
+    # -------------------------------------------
+    # Get values from form
+    # -------------------------------------------
     if request.method == "POST":
         start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
         end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
@@ -264,6 +270,9 @@ def daily_return_Page():
         else:
             errorMsg = "Error: Invalid stock ticker selected."
             return render_template("daily_ret.html", results = None, start_date = start_date, end_date = end_date, daily_ret_graph= None)
+            # -------------------------------------------
+            # Call visualisation function to draw graph
+            # -------------------------------------------
         daily_ret_graph = visualization.plot_daily_ret(results, source)
 
     return render_template("daily_ret.html", results = results, start_date = start_date, end_date = end_date, daily_ret_graph= daily_ret_graph)

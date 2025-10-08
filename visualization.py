@@ -218,7 +218,9 @@ def plot_daily_ret(results, source):
     
     dates = []
     daily_returns = []
-
+    # -------------------------------------------
+    # Extract dates and daily returns from results
+    # -------------------------------------------
     for i in results:
         # If i is a dict
         if isinstance(i, dict):
@@ -242,10 +244,13 @@ def plot_daily_ret(results, source):
             except ValueError:
                 pass  # keep as string if format unknown
 
-        dates.append(date)
-        daily_returns.append(ret)
+        dates.append(date) # Append the date to the list
+        daily_returns.append(ret) # Append the daily return to the list
 
+    # -------------------------------------------
     # Build figure
+    # -------------------------------------------
+    # line plot with markers and hover over interaction
     fig = go.Figure()
     fig.add_trace(go.Scatter(
         x=dates,
@@ -255,7 +260,9 @@ def plot_daily_ret(results, source):
         line=dict(color="blue", width=2),
         hovertemplate='%{x}<br>Return: %{y:.2%}<extra></extra>'
     ))
-
+    # -------------------------------------------
+    # Customize layout of the graph with hover over interaction, namings, and information
+    # -------------------------------------------
     fig.update_layout(
         title=f"{source} Daily Returns",
         xaxis_title="Date",
@@ -263,4 +270,4 @@ def plot_daily_ret(results, source):
         template="plotly_white"
     )
 
-    return fig.to_html(full_html=False)
+    return fig.to_html(full_html=False) # Return the HTML representation of the figure

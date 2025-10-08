@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-def ols_regression(x_data, y_data)-> tuple:
+def ols_regression(x_data, y_data):
     """
     !!!this function was made by Google AI and editted + debugged by JacobLeow!!!
     
@@ -20,6 +20,8 @@ def ols_regression(x_data, y_data)-> tuple:
         raise ValueError("len_x_data != len_y_data")
     
     # Calculate sums
+    # print(x_data[:10])
+    # print(y_data[:10])
     sum_x = sum(x_data)
     sum_y = sum(y_data)
     sum_xy = sum(x * y for x, y in zip(x_data, y_data))
@@ -34,8 +36,9 @@ def ols_regression(x_data, y_data)-> tuple:
 
     # Calculate intercept 
     intercept = (sum_y - slope * sum_x) / n
+    # print(f"Slope: {slope}\nIntercept:{intercept}")
 
-    return (slope, intercept)
+    return slope, intercept
 
 
 def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_date: datetime, sample_days: int) -> tuple:
@@ -400,11 +403,17 @@ class SegmentTree:
 def daily_ret(stockData):
     dates = stockData["Date"]
     closes = stockData["Close/Last"]
+    # -------------------------------------------
     # Calculate daily returns
-    daily_returns = [None]  # no return for first day
+    # -------------------------------------------
+    daily_returns = [None]  # no return for non-trading day
+    # -------------------------------------------
+    # Calculate daily returns using the formula: (current_close - previous_close) / previous_close
+    # -------------------------------------------
     for i in range(1, len(closes)):
         ret = (closes[i] - closes[i-1]) / closes[i-1]
-        daily_returns.append(ret)
-
+        daily_returns.append(ret) # Append the calculated return to the list
+    # -------------------------------------------
     # Return as list of dicts (date, daily return)
+    # -------------------------------------------
     return [{"Date": d, "Daily Return": r} for d, r in zip(dates, daily_returns)]
