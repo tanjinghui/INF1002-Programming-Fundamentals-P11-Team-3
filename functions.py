@@ -284,7 +284,7 @@ class SegmentTree:
     # -------------------------------------------
     # 1. Segment Tree data structure to allow range queries for average and max in O(log n) time
     # -------------------------------------------
-    def __init__(self, stockData: dict[str, list[object]]):
+    def __init__(self, stockData: dict[str, list[object]]) -> None:
         self.n = len(stockData)
         # Initialize max and sum segment tree with size 4*n to accommodate all nodes
         self.sum_tree = [0] * (4 * self.n)
@@ -296,7 +296,7 @@ class SegmentTree:
     # -------------------------------------------
     # 2. Build the segment tree recursively, where each node represents the sum of a segment
     # -------------------------------------------
-    def build_sum_tree(self, stockData, node, left, right):
+    def build_sum_tree(self, stockData: dict[str, list[object]], node: int, left: int, right: int) -> None:
         # Node that represents a single date
         if left == right: 
             self.sum_tree[node] = stockData[left]
@@ -310,7 +310,7 @@ class SegmentTree:
     # -------------------------------------------
     # 3. Calculate range sum and average using the segment tree
     # -------------------------------------------
-    def range_sum(self, node, left, right, query_left, query_right):
+    def range_sum(self, node: int, left: int, right: int, query_left: int, query_right: int) -> int:
         # If query range is outside the node range, return 0
         if query_right < left or query_left > right:
             return 0
@@ -322,8 +322,8 @@ class SegmentTree:
         left_sum = self.range_sum(2 * node + 1, left, mid, query_left, query_right)
         right_sum = self.range_sum(2 * node + 2, mid + 1, right, query_left, query_right)
         return left_sum + right_sum
-    
-    def range_average(self, start_date, end_date):
+
+    def range_average(self, start_date: int, end_date: int) -> float:
         # Calculate total sum in the range and divide by number of days to get average
         total_sum = self.range_sum(0, 0, self.n - 1, start_date, end_date)
         return total_sum / (end_date - start_date + 1)
@@ -331,7 +331,7 @@ class SegmentTree:
     # -------------------------------------------
     # 4. Build another segment tree for range max queries
     # -------------------------------------------
-    def build_max_tree(self, stockData, node, left, right):
+    def build_max_tree(self, stockData: dict[str, list[object]], node: int, left: int, right: int) -> None:
         # Node that represents a single date
         if left == right: 
             self.max_tree[node] = stockData[left]
@@ -342,7 +342,7 @@ class SegmentTree:
             self.build_max_tree(stockData, 2 * node + 2, mid + 1, right)
             self.max_tree[node] = max(self.max_tree[2 * node + 1], self.max_tree[2 * node + 2])
 
-    def call_range_max(self, node, left, right, query_left, query_right):
+    def call_range_max(self, node: int, left: int, right: int, query_left: int, query_right: int) -> float:
         # If query range is outside the node range, return negative infinity, negative infinity is used so negative values are considered
         if query_right < left or query_left > right:
             return float('-inf')
@@ -354,8 +354,8 @@ class SegmentTree:
         left_max = self.call_range_max(2 * node + 1, left, mid, query_left, query_right)
         right_max = self.call_range_max(2 * node + 2, mid + 1, right, query_left, query_right)
         return max(left_max, right_max)
-    
-    def range_max(self, start_date, end_date):
+
+    def range_max(self, start_date: int, end_date: int) -> float:
         # Calculate the maximum in the range
         return self.call_range_max(0, 0, self.n - 1, start_date, end_date)
     
