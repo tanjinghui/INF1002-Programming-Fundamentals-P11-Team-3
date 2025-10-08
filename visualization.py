@@ -209,7 +209,7 @@ def plot_max_profit(stockData, results):
     # fig.show()
     return fig.to_html(full_html = False)
 
-def plot_daily_ret(results):
+def plot_daily_ret(results, source):
     """
     results: list of dicts or tuples/namedtuples with 'Date' and 'Daily Return'
     Example dict: {'Date': datetime, 'Daily Return': 0.01}
@@ -257,7 +257,7 @@ def plot_daily_ret(results):
     ))
 
     fig.update_layout(
-        title="Apple Daily Returns",
+        title=f"{source} Daily Returns",
         xaxis_title="Date",
         yaxis_title="Daily Return",
         template="plotly_white"

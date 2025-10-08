@@ -264,7 +264,7 @@ def daily_return_Page():
         else:
             errorMsg = "Error: Invalid stock ticker selected."
             return render_template("daily_ret.html", results = None, start_date = start_date, end_date = end_date, daily_ret_graph= None)
-        daily_ret_graph = visualization.plot_daily_ret(results)
+        daily_ret_graph = visualization.plot_daily_ret(results, source)
 
     return render_template("daily_ret.html", results = results, start_date = start_date, end_date = end_date, daily_ret_graph= daily_ret_graph)
 
