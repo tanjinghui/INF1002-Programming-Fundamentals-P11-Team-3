@@ -205,12 +205,12 @@ def binary_search(dates: list[datetime], target: datetime) -> int:
 
     while start <= end:
         mid = (start + end) // 2
-        # Move left if mid date is after or equal to target
-        if dates[mid] >= target: 
-            end = mid - 1
         # Exact match found
-        elif dates[mid] == target: 
+        if dates[mid] == target: 
             return mid
+        # Move left if mid date is after or equal to target
+        elif dates[mid] > target: 
+            end = mid - 1
         # Move right if mid date is before target
         else: 
             start = mid + 1
@@ -276,11 +276,25 @@ def moving_average(stockData: dict[str, list[object]], start_date: datetime, end
     dates = stockData["Date"]
     close_prices = stockData["Close/Last"]
 
+    # Edge case handling, return empty list if no data or invalid input
+    if not dates or not close_prices or days_window <= 0:
+        return []
+    if start_date > end_date:
+        return []
+
     startDate = binary_search(dates, start_date)
     endDate = binary_search(dates, end_date)
 
+    # Edge case handling, return empty list if no data in range
+    if startDate >= len(dates) or endDate < 1:
+        return []
+
     filtered_dates = dates[startDate : endDate + 1]
     filtered_prices = close_prices[startDate : endDate + 1]
+
+    # Edge case handling, return empty list if not enough data for the window
+    if len(filtered_prices) < days_window:
+        return []
     # -------------------------------------------
     # 4. Calculate SMA and EMA
     # -------------------------------------------
