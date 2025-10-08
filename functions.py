@@ -321,7 +321,7 @@ class SegmentTree:
     # -------------------------------------------
     # 1. Segment Tree data structure to allow range queries for average and max in O(log n) time
     # -------------------------------------------
-    def __init__(self, stockData: dict[str, list[object]]) -> None:
+    def __init__(self, stockData: list[float]) -> None:
         self.n = len(stockData)
         # Initialize max and sum segment tree with size 4*n to accommodate all nodes
         self.sum_tree = [0] * (4 * self.n)
@@ -333,7 +333,7 @@ class SegmentTree:
     # -------------------------------------------
     # 2. Build the segment tree recursively, where each node represents the sum of a segment
     # -------------------------------------------
-    def build_sum_tree(self, stockData: dict[str, list[object]], node: int, left: int, right: int) -> None:
+    def build_sum_tree(self, stockData: list[float], node: int, left: int, right: int) -> None:
         # Node that represents a single date
         if left == right: 
             self.sum_tree[node] = stockData[left]
@@ -361,6 +361,9 @@ class SegmentTree:
         return left_sum + right_sum
 
     def range_average(self, start_date: int, end_date: int) -> float:
+        # Validate date range
+        if start_date < 0 or end_date >= self.n or start_date > end_date:
+            raise ValueError("Invalid date range")
         # Calculate total sum in the range and divide by number of days to get average
         total_sum = self.range_sum(0, 0, self.n - 1, start_date, end_date)
         return total_sum / (end_date - start_date + 1)
@@ -368,7 +371,7 @@ class SegmentTree:
     # -------------------------------------------
     # 4. Build another segment tree for range max queries
     # -------------------------------------------
-    def build_max_tree(self, stockData: dict[str, list[object]], node: int, left: int, right: int) -> None:
+    def build_max_tree(self, stockData: list[float], node: int, left: int, right: int) -> None:
         # Node that represents a single date
         if left == right: 
             self.max_tree[node] = stockData[left]
@@ -393,6 +396,9 @@ class SegmentTree:
         return max(left_max, right_max)
 
     def range_max(self, start_date: int, end_date: int) -> float:
+        # Validate date range
+        if start_date < 0 or end_date >= self.n or start_date > end_date:
+            raise ValueError("Invalid date range")
         # Calculate the maximum in the range
         return self.call_range_max(0, 0, self.n - 1, start_date, end_date)
     
