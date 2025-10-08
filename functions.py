@@ -47,12 +47,11 @@ def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_d
     assume stockData is sorted by date
     
     return values:
-    (list) dates: list of dates 
-    (list) prices: list of closing prices
-    (int) indexStart: index of start_date in dates
-    (int) indexEnd: index of end_date in dates
+    (dict) results: a dict with keys: "Date", "Close/Last", "Trend"
+        (key) Date: list of dates; Datetime obj 
+        (key) Close/Last: list of closing prices; float
+        (key) Trend: prices for trend line for last sample_days
     (int) sample_days: number of days to sample for trend line
-    (list) trend_data: prices for trend line for last sample_days
     (str) errorMsg: error message if any
     (bool) bullOrBear: True if bull trend, False if bear trend, None if flat trend
 
@@ -60,25 +59,42 @@ def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_d
     https://www.geeksforgeeks.org/python/python-program-to-get-total-business-days-between-two-dates
     https://stackoverflow.com/questions/65012886/plotly-how-to-calculate-and-illustrate-the-upper-and-lower-50-of-a-trend-line
     """
-    
-    dates = [i for i in stockData["Date"]]
-    prices = [i for i in stockData["Close/Last"]]
-    index = [i for i,v in enumerate(stockData["Date"])]
+    # -------------------------------------------
+    # Retrieve and init data and variables
+    # -------------------------------------------
+    dates = [date for date in stockData["Date"]]
+    prices = [close for close in stockData["Close/Last"]]
+    index = [index for index in range(len(stockData["Date"]))]
     errorMsg = None
     bullOrBear = None
     result = []
+    # -------------------------------------------
+    # start and end date input validation
+    # -------------------------------------------
     if (end_date-start_date).days <= 0:
         errorMsg = "Swapped start and end date"
         start_date,end_date = end_date,start_date
+    # -------------------------------------------
+    # Search for valid date in data set (weekend dates do not have data)
+    # -------------------------------------------
     startDate = binary_search(dates, start_date)
     endDate = binary_search(dates, end_date)
     num_weedays_selected = endDate - startDate + 1
+    # -------------------------------------------
+    # sample days input validation
+    # -------------------------------------------
     if  sample_days > num_weedays_selected:
         sample_days = num_weedays_selected//2
         errorMsg = "Trend window set to default ratio of date range"
+    # -------------------------------------------
+    # Trim down local copy of data set
+    # -------------------------------------------
     dates = dates[startDate : endDate + 1]
     prices = prices[startDate : endDate + 1]
     index = index[startDate : endDate + 1]
+    # -------------------------------------------
+    # Attempt to generate trend data
+    # -------------------------------------------
     try:
         trend,const = ols_regression(
             index[-sample_days:],
@@ -95,7 +111,7 @@ def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_d
     elif trend < -0.15:
         bullOrBear = False
     else:
-        pass
+        bullOrBear = None
     trend_data = [const + (trend*i) for i in index]
     for date, price, trend in zip(dates, prices, trend_data):
         result.append({"Date" : date, "Close/Last" : price, "Trend" : trend})
