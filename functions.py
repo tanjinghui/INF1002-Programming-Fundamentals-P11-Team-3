@@ -223,23 +223,21 @@ def binary_search(dates: list[datetime], target: datetime) -> int:
 def calc_sma(close_prices: list[float], days_window: int) -> list[float]:
     # -------------------------------------------
     # 1. Populate sma_prices list so that dates with less than window days will have None value
-    # 2. Returns None value list as the window is too big for the selected range
     # ------------------------------------------- 
-    sma_prices = [None] * len(close_prices)
-    if len(close_prices) < days_window:
-        return sma_prices
+    n = len(close_prices)
+    sma_prices = [None] * n
     
     # ------------------------------------------- 
-    # 3. Calculate sum of first window and update it into sma_prices
+    # 2. Calculate sum of first window and update it into sma_prices
     # ------------------------------------------- 
     closeSum = sum(close_prices[:days_window])
     sma_prices[days_window - 1] = round(closeSum / days_window, 2)
 
     # ------------------------------------------- 
-    # 4. For loop over each price/date and adding the current while subtracting the earliest price/date
-    # 5. Calculate SMA by diving by window and rounding off to 2 d.p. while updating sma_prices
+    # 3. For loop over each price/date and adding the current while subtracting the earliest price/date
+    # 4. Calculate SMA by diving by window and rounding off to 2 d.p. while updating sma_prices
     # ------------------------------------------- 
-    for i in range(days_window, len(close_prices)):
+    for i in range(days_window, n):
         closeSum += close_prices[i] - close_prices[i - days_window]
         sma_prices[i] = round(closeSum / days_window, 2)
     
