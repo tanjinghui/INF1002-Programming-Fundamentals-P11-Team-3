@@ -174,10 +174,16 @@ def smaPage():
 
 @app.route("/trend", methods = ["GET", "POST"])
 def trendPage():
+    # -------------------------------------------
+    # Initialise base page ready for ajax
+    # -------------------------------------------
     return render_template("trend.html", results = None, trend_window = None, stert_date = None, end_date = None, trendGraph= None, errorMsg=None, bullOrBear = None)
 
 @app.route("/trend_partial", methods=['POST'])
 def trend_partial():
+    # -------------------------------------------
+    # Get values from form
+    # -------------------------------------------
     params = {
         "source" : request.values.get("source"),
         "start_date" : request.values.get("start_date"),
@@ -190,11 +196,20 @@ def trend_partial():
     end_date = datetime.strptime(params["end_date"], "%Y-%m-%d")
     trend_window = int(params["trend_window"])
     source = params["source"]
-    if  source in listOfTickers + ["LOCAL"]:
+    # -------------------------------------------
+    # look for source in list of tickers to generate graph
+    # -------------------------------------------
+    if source in listOfTickers + ["LOCAL"]:
         results = functions.trend_finder(stockData[source], start_date, end_date, trend_window)
     else:
+        # -------------------------------------------
+        # execption handling for unexpected case
+        # -------------------------------------------
         errorMsg = "Error: Invalid stock ticker selected."
         return render_template("trend_partial.html", results = None, trend_window = None, stert_date = start_date, end_date = end_date, trendGraph= None, errorMsg=errorMsg, bullOrBear = None)
+    # -------------------------------------------
+    # Call visualisation function to draw graph
+    # -------------------------------------------
     trendGraph = visualization.plot_updown_trend(results)
     return render_template("trend_partial.html", results = results, trend_window = trend_window, stert_date = start_date, end_date = end_date, trendGraph= trendGraph, errorMsg=results[2], bullOrBear = results[3])
 
