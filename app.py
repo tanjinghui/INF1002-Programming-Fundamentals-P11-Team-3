@@ -48,26 +48,51 @@ def loadData(csvfile):
 
 
 def setupTickers(listOfTickers: list[str], start_date: str, end_date: str) -> dict[str:dict]:
-    # assume: start_date, end_date format: "YYYY-MM-DD"
+    """
+    Download stock data for given tickers and date range using yfinance.
+
+    assume: start_date, end_date format: "YYYY-MM-DD"
+
+    listOfTickers: a list of strings where each string is a valid 3/4 letter ticker on real stock markets
+    start_date: a string in format YYYY-MM-DD to indicate which day to start from
+    end_date: a string in format YYYY-MM-DD to indicate which day to end at
+
+    return: a nested dictionary with the ticker as the key. e.g. {"AAPL":{"Date":..., "Close":..., ...}, "META":{...}}
+
+    references:
+    https://stackoverflow.com/questions/25852044/converting-pandas-tslib-timestamp-to-datetime-python
+    """
     try:
         result = {}
         data = yf.download(listOfTickers, start = start_date, end = end_date, auto_adjust=True, progress=False)
-        for i in listOfTickers:
-            dates = [v.to_pydatetime() for v in data.index]
-            close_prices = [float(data["Close"][i][v]) for v in data["Close"][i].index]   #float(i["Close/Last"].replace("$", "").strip())
-            volume = [int(data["Volume"][i][v]) for v in data["Volume"][i].index]  #int(i["Volume"])
-            open_price = [float(data["Open"][i][v]) for v in data["Open"][i].index]      #float(i["Open"].replace("$", "").strip())
-            high_price = [float(data["High"][i][v]) for v in data["High"][i].index]      #float(i["High"].replace("$", "").strip())
-            low_price = [float(data["Low"][i][v]) for v in data["Low"][i].index]     #float(i["Low"].replace("$", "").strip())
+        for ticker in listOfTickers:
+            # -------------------------------------------
+            # get datetime obj for indexing like CSV loading function
+            # -------------------------------------------
+            dates = [date.to_pydatetime() for date in data.index]
+            # -------------------------------------------
+            # use list comprehension to retrieve and process data into correct type
+            # -------------------------------------------
+            close_prices = [float(close) for date,close in data["Close"][ticker].items()]
+            volume = [int(vol) for date,vol in data["Volume"][ticker].items()]
+            open_price = [float(open) for date,open in data["Open"][ticker].items()]
+            high_price = [float(high) for date,high in data["High"][ticker].items()]
+            low_price = [float(low) for date,low in data["Low"][ticker].items()]
+            # -------------------------------------------
+            # Combine the data together by index in order to sort all data together by date
+            # Unpacks the data into their respective lists
+            # -------------------------------------------
             combineSort = sorted(zip(dates, close_prices, volume, open_price, high_price, low_price), key = lambda dates: dates[0])
             dates, close_prices, volume, open_price, high_price, low_price = zip(*combineSort)
-            result[i] = {"Date" : list(dates), "Close/Last" : list(close_prices), "Volume" : list(volume), "Open" : list(open_price), "High" : list(high_price), "Low" : list(low_price)}
+            result[ticker] = {"Date" : list(dates), "Close/Last" : list(close_prices), "Volume" : list(volume), "Open" : list(open_price), "High" : list(high_price), "Low" : list(low_price)}
         return result
+    # -------------------------------------------
+    # Execption handling in case unable to reach servers
+    # -------------------------------------------
     except Exception as e:
         print("Error in setupTickers:", e)
         return None
-    # references:
-    # https://stackoverflow.com/questions/25852044/converting-pandas-tslib-timestamp-to-datetime-python
+
 
 
 listOfTickers = ["AAPL" ,"MSFT" ,"GOOG" ,"NVDA" ,"AMZN", "TSLA", "META"]
