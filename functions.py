@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-def ols_regression(x_data, y_data):
+def ols_regression(x_data, y_data) -> tuple:
     """
     !!!this function was made by Google AI and editted + debugged by JacobLeow!!!
     
@@ -20,8 +20,6 @@ def ols_regression(x_data, y_data):
         raise ValueError("len_x_data != len_y_data")
     
     # Calculate sums
-    # print(x_data[:10])
-    # print(y_data[:10])
     sum_x = sum(x_data)
     sum_y = sum(y_data)
     sum_xy = sum(x * y for x, y in zip(x_data, y_data))
@@ -36,9 +34,8 @@ def ols_regression(x_data, y_data):
 
     # Calculate intercept 
     intercept = (sum_y - slope * sum_x) / n
-    # print(f"Slope: {slope}\nIntercept:{intercept}")
 
-    return slope, intercept
+    return (slope, intercept)
 
 
 def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_date: datetime, sample_days: int) -> tuple:
