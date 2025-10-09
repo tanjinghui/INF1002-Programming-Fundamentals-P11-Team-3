@@ -227,6 +227,7 @@ def binary_search(dates: list[datetime], target: datetime) -> int:
         # Move right if mid date is before target
         else: 
             start = mid + 1
+            
     # -------------------------------------------
     # 2. If date not found, return the closest date that is after the target
     # -------------------------------------------
@@ -262,6 +263,7 @@ def calc_ema(close_prices: list[float], smaData: list[float], days_window: int) 
     # 1. Builds on from calc_sma, where results from SMA is multiplied by the multiplier to give EMA
     # -------------------------------------------
     multiplier = 2 / (days_window + 1)
+
     # -------------------------------------------
     # 2. Creates ema_prices list so that dates with less than window days will have None value
     # -------------------------------------------
@@ -364,6 +366,7 @@ class SegmentTree:
         right_sum = self.range_sum(2 * node + 2, mid + 1, right, query_left, query_right)
         return left_sum + right_sum
 
+
     def range_average(self, start_date: int, end_date: int) -> float:
         # Validate date range
         if start_date < 0 or end_date >= self.n or start_date > end_date:
@@ -386,6 +389,7 @@ class SegmentTree:
             self.build_max_tree(stockData, 2 * node + 2, mid + 1, right)
             self.max_tree[node] = max(self.max_tree[2 * node + 1], self.max_tree[2 * node + 2])
 
+
     def call_range_max(self, node: int, left: int, right: int, query_left: int, query_right: int) -> float:
         # If query range is outside the node range, return negative infinity, negative infinity is used so negative values are considered
         if query_right < left or query_left > right:
@@ -398,6 +402,7 @@ class SegmentTree:
         left_max = self.call_range_max(2 * node + 1, left, mid, query_left, query_right)
         right_max = self.call_range_max(2 * node + 2, mid + 1, right, query_left, query_right)
         return max(left_max, right_max)
+
 
     def range_max(self, start_date: int, end_date: int) -> float:
         # Validate date range

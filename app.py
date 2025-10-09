@@ -116,6 +116,7 @@ def home():
         try:
             date_filter = int(date_filter)
         except ValueError:
+            # Default to 30 if conversion fails
             date_filter = 30
     indexGraph = visualization.plot_indexGraph(stockData[source], source, date_filter)
     return render_template("index.html", indexGraph = indexGraph, source = source, date_filter = date_filter)
@@ -140,6 +141,10 @@ def rangePage():
         start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
         end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
         source = request.form.get("source")
+        # -------------------------------------------
+        # Dates are passed to binary search function to get index
+        # Passes values to segment tree to get average and max
+        # -------------------------------------------
         if source in listOfTickers + ["LOCAL"]:
             start_date_index = functions.binary_search(stockData[source]["Date"], start_date)
             end_date_index = functions.binary_search(stockData[source]["Date"], end_date)
@@ -174,11 +179,17 @@ def smaPage():
         end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
         days_window = int(request.form.get("days_window"))
         source = request.form.get("source")
+        # -------------------------------------------
+        # Calls moving average function to get results
+        # -------------------------------------------
         if source in listOfTickers + ["LOCAL"]:
             results = functions.moving_average(stockData[source], start_date, end_date, days_window)
         else:
             errorMsg = "Error: Invalid stock ticker selected."
             return render_template("sma.html", results = results, days_window = days_window, start_date = start_date, end_date = end_date, maGraph = maGraph, errorMsg = errorMsg, source = source)
+        # -------------------------------------------
+        # Call visualisation function to draw graph
+        # -------------------------------------------
         maGraph = visualization.plot_maGraph(results, days_window, source)
 
     return render_template("sma.html", results = results, days_window = days_window, start_date = start_date, end_date = end_date, maGraph= maGraph, source = source)
