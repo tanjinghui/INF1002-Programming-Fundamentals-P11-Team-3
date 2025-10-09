@@ -146,10 +146,11 @@
                                 </form>
                             </div>
                             <div class="col-xl-8">
+                                <!-- Display graph -->
                                  {% if maGraph %}
                                     {{ maGraph | safe }}
                                 {% endif %}
-
+                                <!-- Display results table -->
                                 {% if results %}
                                     <h3>{{ source }} Results for {{ days_window }}-Day SMA and EMA ({{ start_date.date() }} → {{ end_date.date() }})</h3>
                                     <table class = "table table-striped">
@@ -159,7 +160,7 @@
                                             <th>SMA</th>
                                             <th>EMA</th>
                                         </tr>
-
+                                    <!-- Table Body -->
                                     {% for i in results %}
                                         <tr>
                                             <td>{{ i["Date"].strftime("%Y-%m-%d") }}</td>

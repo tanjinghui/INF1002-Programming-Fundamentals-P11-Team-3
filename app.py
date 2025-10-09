@@ -123,6 +123,9 @@ def home():
 
 @app.route("/range", methods = ["GET", "POST"])
 def rangePage():
+    # -------------------------------------------
+    # Initialize range page
+    # -------------------------------------------
     start_date = None
     end_date = None
     average = None
@@ -130,6 +133,9 @@ def rangePage():
     source = None
     errorMsg = None
     rows = None
+    # -------------------------------------------
+    # Get values from form
+    # -------------------------------------------
     if request.method == "POST":
         start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
         end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
@@ -150,6 +156,9 @@ def rangePage():
 
 @app.route("/sma", methods = ["GET", "POST"])
 def smaPage():
+    # -------------------------------------------
+    # Initialize sma page
+    # -------------------------------------------
     results = None
     start_date = None
     end_date = None
@@ -157,6 +166,9 @@ def smaPage():
     maGraph = None
     source = None
     errorMsg = None
+    # -------------------------------------------
+    # Get values from form
+    # -------------------------------------------
     if request.method == "POST":
         start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
         end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
