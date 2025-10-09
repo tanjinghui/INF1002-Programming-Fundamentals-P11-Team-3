@@ -5,9 +5,10 @@
 
 # Contributors
 
-| Name | Role | Username | GitHub Link| 
+| Name | Username | GitHub Link| 
 | :--- | :------: |  :------: | ----: |
-|      |          |           |       |
-|      |          |           |       |
-|      |          |           |       |
-| TAN Jing Hui |         |     tanjinghui      |   https://github.com/tanjinghui    |
+| Lee Ruo Chen |  leeruochen  |   https://github.com/leeruochen   |
+| Dinesh |   dinesh379    |   https://github.com/dinesh379    |
+| Jacob Leow |   GeneralJacobi     |   https://github.com/GeneralJacobi   |
+| TAN Jing Hui |     tanjinghui      |   https://github.com/tanjinghui    |
+| Toh You Yang |     tohyouyang      |   https://github.com/tohyouyang    |
