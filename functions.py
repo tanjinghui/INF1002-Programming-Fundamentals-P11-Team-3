@@ -212,6 +212,10 @@ def binary_search(dates: list[datetime], target: datetime) -> int:
     start = 0
     end = len(dates) - 1
 
+    # Edge case handling, return 0 if target date is out of range of dates
+    if target > dates[end] or target < dates[start]:
+        return 0
+
     while start <= end:
         mid = (start + end) // 2
         # Exact match found
@@ -363,7 +367,7 @@ class SegmentTree:
     def range_average(self, start_date: int, end_date: int) -> float:
         # Validate date range
         if start_date < 0 or end_date >= self.n or start_date > end_date:
-            raise ValueError("Invalid date range")
+            return 0.0
         # Calculate total sum in the range and divide by number of days to get average
         total_sum = self.range_sum(0, 0, self.n - 1, start_date, end_date)
         return total_sum / (end_date - start_date + 1)
@@ -398,7 +402,7 @@ class SegmentTree:
     def range_max(self, start_date: int, end_date: int) -> float:
         # Validate date range
         if start_date < 0 or end_date >= self.n or start_date > end_date:
-            raise ValueError("Invalid date range")
+            return 0.0
         # Calculate the maximum in the range
         return self.call_range_max(0, 0, self.n - 1, start_date, end_date)
     
