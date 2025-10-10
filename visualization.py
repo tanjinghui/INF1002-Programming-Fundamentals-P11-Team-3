@@ -226,16 +226,8 @@ def plot_daily_ret(results, source):
         if isinstance(i, dict):
             date = i.get("Date")
             ret = i.get("Daily Return")
-        # If i is a namedtuple
-        elif hasattr(i, "_fields"):
-            date = getattr(i, "Date", None)
-            ret = getattr(i, "Daily Return", None)
-        # If i is a plain tuple
         else:
-            if len(i) >= 2:
-                date, ret = i[0], i[1]
-            else:
-                continue  # skip malformed entries
+            continue  # skip malformed entries
 
         # Convert string date to datetime if needed
         if isinstance(date, str):
@@ -267,7 +259,8 @@ def plot_daily_ret(results, source):
         title=f"{source} Daily Returns",
         xaxis_title="Date",
         yaxis_title="Daily Return",
-        template="plotly_white"
+        template="plotly_white",
+        yaxis=dict(tickformat=".2%")
     )
 
     return fig.to_html(full_html=False) # Return the HTML representation of the figure
