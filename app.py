@@ -190,7 +190,10 @@ def smaPage():
         # -------------------------------------------
         # Call visualisation function to draw graph
         # -------------------------------------------
-        maGraph = visualization.plot_maGraph(results, days_window, source)
+        try:
+            maGraph = visualization.plot_maGraph(results, days_window, source)
+        except Exception as e:
+            return render_template("sma.html", results = results, days_window = days_window, start_date = start_date, end_date = end_date, maGraph= None, errorMsg = e, source = source)
 
     return render_template("sma.html", results = results, days_window = days_window, start_date = start_date, end_date = end_date, maGraph= maGraph, source = source)
 
@@ -233,7 +236,10 @@ def trend_partial():
     # -------------------------------------------
     # Call visualisation function to draw graph
     # -------------------------------------------
-    trendGraph = visualization.plot_updown_trend(results)
+    try:
+        trendGraph = visualization.plot_updown_trend(results)
+    except Exception as e:
+        return render_template("trend_partial.html", results = None, trend_window = None, stert_date = start_date, end_date = end_date, trendGraph= None, errorMsg=e, bullOrBear = None)
     return render_template("trend_partial.html", results = results, trend_window = trend_window, stert_date = start_date, end_date = end_date, trendGraph= trendGraph, errorMsg=results[2], bullOrBear = results[3])
 
 @app.route("/max_profit", methods = ["GET", "POST"])
@@ -244,16 +250,19 @@ def max_profit_Page():
     max_profit_Graph = None
     source = None
     if request.method == "POST":
-        start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
-        end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
-        source = request.form.get("source")
-        if source in listOfTickers + ["LOCAL"]:
-            results = functions.max_profit(stockData[source], start_date, end_date)
-        else:
-            errorMsg = "Error: Invalid stock ticker selected."
-            return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=errorMsg)
-        max_profit_Graph = visualization.plot_max_profit(stockData[source],results)
-        return render_template("max_profit.html", results = results, stert_date = start_date, end_date = end_date, max_profit_Graph= max_profit_Graph, errorMsg=results[4])
+        try:
+            start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
+            end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
+            source = request.form.get("source")
+            if source in listOfTickers + ["LOCAL"]:
+                results = functions.max_profit(stockData[source], start_date, end_date)
+            else:
+                errorMsg = "Error: Invalid stock ticker selected."
+                return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=errorMsg)
+            max_profit_Graph = visualization.plot_max_profit(stockData[source],results)
+            return render_template("max_profit.html", results = results, stert_date = start_date, end_date = end_date, max_profit_Graph= max_profit_Graph, errorMsg=results[4])
+        except Exception as e:
+            return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=e)
     return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=None)
 
 
@@ -296,7 +305,10 @@ def daily_return_Page():
             # -------------------------------------------
             # Call visualisation function to draw graph
             # -------------------------------------------
-        daily_ret_graph = visualization.plot_daily_ret(results, source)
+        try:
+            daily_ret_graph = visualization.plot_daily_ret(results, source)
+        except Exception as e:
+            return render_template("daily_ret.html", results = None, start_date = start_date, end_date = end_date, daily_ret_graph= None)
 
     return render_template("daily_ret.html", results = results, start_date = start_date, end_date = end_date, daily_ret_graph= daily_ret_graph)
 
