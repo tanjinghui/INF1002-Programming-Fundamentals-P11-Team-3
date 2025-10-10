@@ -109,7 +109,7 @@ def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_d
         # -------------------------------------------
         trend_data = [None for i in index]
         errorMsg = str(e)
-        for dateT, priceT, trendT, openT, highT, lowT in zip(dates, prices, trend_data,openPrice,high,low):
+        for dateT, priceT, trendT, openT, highT, lowT in zip(dates, prices, trend_data, openPrice, high, low):
             result.append({"Date" : dateT, "Close/Last" : priceT, "Trend" : trendT, "Open" : openT, "High" : highT, "Low" : lowT})
         return (result, sample_days, errorMsg, bullOrBear)
     # -------------------------------------------
@@ -128,8 +128,8 @@ def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_d
     # -------------------------------------------
     # Prepare data for return
     # -------------------------------------------
-    for date, price, trend in zip(dates, prices, trend_data):
-        result.append({"Date" : date, "Close/Last" : price, "Trend" : trend})
+    for dateT, priceT, trendT, openT, highT, lowT in zip(dates, prices, trend_data, openPrice, high, low):
+        result.append({"Date" : dateT, "Close/Last" : priceT, "Trend" : trendT, "Open" : openT, "High" : highT, "Low" : lowT})
     return (result, sample_days, errorMsg, bullOrBear)
 
 

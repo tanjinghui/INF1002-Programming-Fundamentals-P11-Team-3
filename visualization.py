@@ -118,16 +118,14 @@ def plot_updown_trend(results: tuple) -> str:
     lowData = [i["Low"] for i in results[0]]
     sample_days = results[1]
     # -------------------------------------------
-    # plot line graph for price
+    # plot candlestick graph for price
     # -------------------------------------------
     fig = go.Figure(
-        data=[
-            go.Scatter(
-                x=datesData,
-                y=pricesData,
-                mode='lines',
-                name='Close Price'
-            ),
+        data=[go.Candlestick(x=datesData,
+        open=openData,
+        high=highData,
+        low=lowData,
+        close=pricesData)
         ],
         # -------------------------------------------
         # add title and axis names
@@ -148,7 +146,7 @@ def plot_updown_trend(results: tuple) -> str:
         )
     )
     # -------------------------------------------
-    # add trend line
+    # add trend line and close price line
     # -------------------------------------------
     fig.add_trace(
         go.Scatter(
@@ -157,13 +155,13 @@ def plot_updown_trend(results: tuple) -> str:
             name = 'Trend')
         )
     fig.add_trace(
-        go.Figure(
-        data=[go.Candlestick(x=datesData,
-        open=openData,
-        high=highData,
-        low=lowData,
-        close=pricesData)]
-        )
+        go.Scatter(
+                x=datesData,
+                y=pricesData,
+                mode='lines',
+                name='Close Price',
+                line=dict(color='goldenrod')
+            )
     )
     # fig.show()
     return fig.to_html(full_html = False)
