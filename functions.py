@@ -220,7 +220,7 @@ def binary_search(dates: list[datetime], target: datetime, direction: int) -> in
     # -------------------------------------------
     # 1. Standard binary search with two pointers that finds the date by dividing by 2 each search
     # -------------------------------------------
-    start = 0
+    start = 0 
     end = len(dates) - 1
 
     # Edge case handling, return 0 if target date is out of range of dates
