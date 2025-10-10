@@ -404,7 +404,9 @@ class SegmentTree:
             self.build_max_tree(stockData, 2 * node + 2, mid + 1, right)
             self.max_tree[node] = max(self.max_tree[2 * node + 1], self.max_tree[2 * node + 2])
 
-
+    # -------------------------------------------
+    # 5. Calculate range max using the segment tree
+    # -------------------------------------------
     def call_range_max(self, node: int, left: int, right: int, query_left: int, query_right: int) -> float:
         # If query range is outside the node range, return negative infinity, negative infinity is used so negative values are considered
         if query_right < left or query_left > right:
