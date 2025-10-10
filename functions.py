@@ -77,8 +77,8 @@ def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_d
     # -------------------------------------------
     # Search for valid date in data set (weekend dates do not have data)
     # -------------------------------------------
-    startDate = binary_search(dates, start_date)
-    endDate = binary_search(dates, end_date)
+    startDate = binary_search(dates, start_date, direction = 0)
+    endDate = binary_search(dates, end_date, direction = 1)
     num_weedays_selected = endDate - startDate + 1
     # -------------------------------------------
     # sample days input validation
@@ -165,8 +165,8 @@ def max_profit(stockData: dict[str:list], start_date: datetime, end_date: dateti
     if (end_date-start_date).days <= 0:
         errorMsg = "Swapped start and end date"
         start_date,end_date = end_date,start_date
-    startDate = binary_search(dates, start_date)
-    endDate = binary_search(dates, end_date)
+    startDate = binary_search(dates, start_date, direction = 0)
+    endDate = binary_search(dates, end_date, direction = 1)
 
     if len(dates) < 2:
         return {
@@ -216,7 +216,7 @@ def max_profit(stockData: dict[str:list], start_date: datetime, end_date: dateti
     return (startDate, endDate, max_profit_amt, transaction, errorMsg)
 
 
-def binary_search(dates: list[datetime], target: datetime) -> int:
+def binary_search(dates: list[datetime], target: datetime, direction: int) -> int:
     # -------------------------------------------
     # 1. Standard binary search with two pointers that finds the date by dividing by 2 each search
     # -------------------------------------------
@@ -242,7 +242,11 @@ def binary_search(dates: list[datetime], target: datetime) -> int:
     # -------------------------------------------
     # 2. If date not found, return the closest date that is after the target
     # -------------------------------------------
-    return start
+    if direction == 0:
+        return start if start < len(dates) else len(dates) - 1
+    
+    if direction == 1:
+        return end if end >= 0 else 0
 
 
 def calc_sma(close_prices: list[float], days_window: int) -> list[float]:
@@ -306,8 +310,8 @@ def moving_average(stockData: dict[str, list[object]], start_date: datetime, end
     if start_date > end_date:
         return []
 
-    startDate = binary_search(dates, start_date)
-    endDate = binary_search(dates, end_date)
+    startDate = binary_search(dates, start_date, direction = 0)
+    endDate = binary_search(dates, end_date, direction = 1)
 
     # Edge case handling, return empty list if no data in range
     if startDate >= len(dates) or endDate < 1:
