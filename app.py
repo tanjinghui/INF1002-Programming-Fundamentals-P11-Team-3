@@ -146,8 +146,8 @@ def rangePage():
         # Passes values to segment tree to get average and max
         # -------------------------------------------
         if source in listOfTickers + ["LOCAL"]:
-            start_date_index = functions.binary_search(stockData[source]["Date"], start_date)
-            end_date_index = functions.binary_search(stockData[source]["Date"], end_date)
+            start_date_index = functions.binary_search(stockData[source]["Date"], start_date, direction = 0)
+            end_date_index = functions.binary_search(stockData[source]["Date"], end_date, direction = 1)
             average = segmentTrees[source].range_average(start_date_index, end_date_index)
             max_value = segmentTrees[source].range_max(start_date_index, end_date_index)
             dates = stockData[source]["Date"][start_date_index:end_date_index + 1]
@@ -251,7 +251,7 @@ def max_profit_Page():
             results = functions.max_profit(stockData[source], start_date, end_date)
         else:
             errorMsg = "Error: Invalid stock ticker selected."
-            return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=None)
+            return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=errorMsg)
         max_profit_Graph = visualization.plot_max_profit(stockData[source],results)
         return render_template("max_profit.html", results = results, stert_date = start_date, end_date = end_date, max_profit_Graph= max_profit_Graph, errorMsg=results[4])
     return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=None)
