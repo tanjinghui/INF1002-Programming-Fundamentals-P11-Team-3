@@ -147,7 +147,7 @@ def max_profit(stockData: dict[str:list], start_date: datetime, end_date: dateti
     (int) start_date: index of start date in datesData for calculation
     (int) end_date: index of start date in datesData end date for calculation
     (int) max_profit_amt: maximum profit amount
-    (dict) buyDay: which day the stock was bought
+    (dict) transactions: contains
         (datetime) buy date
         (datetime) sell date
         (float) buy price
