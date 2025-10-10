@@ -107,11 +107,19 @@ def plot_indexGraph(stockData, source, date_filter):
 
 
 def plot_updown_trend(results: tuple) -> str:
+    # -------------------------------------------
+    # init dta
+    # -------------------------------------------
     datesData = [i["Date"] for i in results[0]]
     pricesData = [i["Close/Last"] for i in results[0]]
     trendData = [i["Trend"] for i in results[0]]
+    openData = [i["Open"] for i in results[0]]
+    highData = [i["High"] for i in results[0]]
+    lowData = [i["Low"] for i in results[0]]
     sample_days = results[1]
-    
+    # -------------------------------------------
+    # plot line graph for price
+    # -------------------------------------------
     fig = go.Figure(
         data=[
             go.Scatter(
@@ -121,6 +129,9 @@ def plot_updown_trend(results: tuple) -> str:
                 name='Close Price'
             ),
         ],
+        # -------------------------------------------
+        # add title and axis names
+        # -------------------------------------------
         layout=go.Layout(
             title_text=f"Trend line for last {sample_days} samples",
             hovermode='x unified',
@@ -136,12 +147,24 @@ def plot_updown_trend(results: tuple) -> str:
             )
         )
     )
+    # -------------------------------------------
+    # add trend line
+    # -------------------------------------------
     fig.add_trace(
         go.Scatter(
             x = datesData[-sample_days:],
             y = trendData[-sample_days:],
             name = 'Trend')
         )
+    fig.add_trace(
+        go.Figure(
+        data=[go.Candlestick(x=datesData,
+        open=openData,
+        high=highData,
+        low=lowData,
+        close=pricesData)]
+        )
+    )
     # fig.show()
     return fig.to_html(full_html = False)
 

@@ -62,6 +62,9 @@ def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_d
     dates = [date for date in stockData["Date"]]
     prices = [close for close in stockData["Close/Last"]]
     index = [index for index in range(len(stockData["Date"]))]
+    openPrice = [price for price in stockData["Open"]]
+    high = [price for price in stockData["High"]]
+    low = [price for price in stockData["Low"]]
     errorMsg = None
     bullOrBear = None
     result = []
@@ -89,6 +92,9 @@ def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_d
     dates = dates[startDate : endDate + 1]
     prices = prices[startDate : endDate + 1]
     index = index[startDate : endDate + 1]
+    openPrice = openPrice[startDate : endDate + 1]
+    high = high[startDate : endDate + 1]
+    low = low[startDate : endDate + 1]
     # -------------------------------------------
     # Attempt to generate trend data
     # -------------------------------------------
@@ -103,8 +109,8 @@ def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_d
         # -------------------------------------------
         trend_data = [None for i in index]
         errorMsg = str(e)
-        for date, price, trend in zip(dates, prices, trend_data):
-            result.append({"Date" : date, "Close/Last" : price, "Trend" : trend})
+        for dateT, priceT, trendT, openT, highT, lowT in zip(dates, prices, trend_data,openPrice,high,low):
+            result.append({"Date" : dateT, "Close/Last" : priceT, "Trend" : trendT, "Open" : openT, "High" : highT, "Low" : lowT})
         return (result, sample_days, errorMsg, bullOrBear)
     # -------------------------------------------
     # prepare bullish or bearish trend indicator, 0.15 was arbitrary, decided by Programmer
@@ -128,7 +134,7 @@ def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_d
 
 
 # Define a function to calculate the maximum profit from buying and selling stocks
-def max_profit(stockData, start_date, end_date):
+def max_profit(stockData: dict[str:list], start_date: datetime, end_date: datetime) -> tuple:
     """
     NOTE:
     assume stockData is sorted by date
@@ -138,11 +144,16 @@ def max_profit(stockData, start_date, end_date):
     (list) stock_price: list of stock prices)
 
     return values:
-    (datetiume) start_date: start date for calculation
-    (datetiume) end_date: end date for calculation
+    (int) start_date: index of start date in datesData for calculation
+    (int) end_date: index of start date in datesData end date for calculation
     (int) max_profit_amt: maximum profit amount
-    (datetime) buyDay: which day the stock was bought
-    (datetime) sellDay: which day the stock was sold
+    (dict) buyDay: which day the stock was bought
+        (datetime) buy date
+        (datetime) sell date
+        (float) buy price
+        (float) sell price
+        (float) profit
+        (bool) is profitable
     (str) errorMsg: error message if any
     """
     # Initialize the maximum profit amount to zero
@@ -202,7 +213,7 @@ def max_profit(stockData, start_date, end_date):
     max_profit_amt = sum(transaction["profit"])
 
     # Return the maximum profit amount
-    return [startDate, endDate, max_profit_amt, transaction, errorMsg]
+    return (startDate, endDate, max_profit_amt, transaction, errorMsg)
 
 
 def binary_search(dates: list[datetime], target: datetime) -> int:
