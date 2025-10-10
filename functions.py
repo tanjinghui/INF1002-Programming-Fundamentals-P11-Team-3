@@ -202,7 +202,7 @@ def max_profit(stockData, start_date, end_date):
     max_profit_amt = sum(transaction["profit"])
 
     # Return the maximum profit amount
-    return [start_date, end_date, max_profit_amt, transaction, errorMsg]
+    return [startDate, endDate, max_profit_amt, transaction, errorMsg]
 
 
 def binary_search(dates: list[datetime], target: datetime) -> int:

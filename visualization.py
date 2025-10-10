@@ -106,7 +106,7 @@ def plot_indexGraph(stockData, source, date_filter):
     return fig.to_html(full_html = False)
 
 
-def plot_updown_trend(results):
+def plot_updown_trend(results: tuple) -> str:
     datesData = [i["Date"] for i in results[0]]
     pricesData = [i["Close/Last"] for i in results[0]]
     trendData = [i["Trend"] for i in results[0]]
@@ -145,22 +145,21 @@ def plot_updown_trend(results):
     # fig.show()
     return fig.to_html(full_html = False)
 
-def plot_max_profit(stockData, results):
+def plot_max_profit(stockData: dict[str:list], results: list) -> str:
     """
     https://plotly.com/python/candlestick-charts
     """
-    datesData = stockData['Date']
-    indexStart = datesData.index(results[0])
-    indexEnd = datesData.index(results[1])
-    datesData = datesData[indexStart:indexEnd]
-    openData = stockData['Open'][indexStart:indexEnd]
-    highData = stockData['High'][indexStart:indexEnd]
-    lowData = stockData['Low'][indexStart:indexEnd]
-    closeData = stockData['Close/Last'][indexStart:indexEnd]
-
-    # indexBuy = datesData.index(results[3])
-    # indexSell = datesData.index(results[4])
-
+    # -------------------------------------------
+    # Prepare Data
+    # -------------------------------------------
+    datesData = stockData['Date'][results[0]:results[1]]
+    openData = stockData['Open'][results[0]:results[1]]
+    highData = stockData['High'][results[0]:results[1]]
+    lowData = stockData['Low'][results[0]:results[1]]
+    closeData = stockData['Close/Last'][results[0]:results[1]]
+    # -------------------------------------------
+    # plot candlestick chart
+    # -------------------------------------------
     fig = go.Figure(
         data=[go.Candlestick(x=datesData,
         open=openData,
@@ -168,7 +167,7 @@ def plot_max_profit(stockData, results):
         low=lowData,
         close=closeData)],
         layout=go.Layout(
-            title_text=f"Max Profit betwween {results[0]} and {results[1]} is $"+"{:.2f}".format(results[2]),
+            title_text=f"Max Profit betwween {datesData[0].date()} and {datesData[-1].date()} is $"+"{:.2f}".format(results[2]),
             hovermode='x unified',
             xaxis=dict(
                 title_text='Date',
@@ -182,10 +181,9 @@ def plot_max_profit(stockData, results):
             )
         )
     )
-    print(results[3]['buy_date'])
-    print(results[3]['buy_price'])
-    print(type(results[3]['buy_date']))
-    print(type(results[3]['buy_price']))
+    # -------------------------------------------
+    # add scatter to show when the buy and sell values are taken from
+    # -------------------------------------------
     fig.add_trace(go.Scatter(
         x=results[3]['buy_date'], 
         y=results[3]['buy_price'],
@@ -206,7 +204,9 @@ def plot_max_profit(stockData, results):
                       name = 'Sell Day'
                       )
                     )
-    # fig.show()
+    # -------------------------------------------
+    # return html string
+    # -------------------------------------------
     return fig.to_html(full_html = False)
 
 def plot_daily_ret(results, source):

@@ -251,7 +251,7 @@ def max_profit_Page():
             results = functions.max_profit(stockData[source], start_date, end_date)
         else:
             errorMsg = "Error: Invalid stock ticker selected."
-            return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=None)
+            return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=errorMsg)
         max_profit_Graph = visualization.plot_max_profit(stockData[source],results)
         return render_template("max_profit.html", results = results, stert_date = start_date, end_date = end_date, max_profit_Graph= max_profit_Graph, errorMsg=results[4])
     return render_template("max_profit.html", results = None, stert_date = start_date, end_date = end_date, max_profit_Graph= None, errorMsg=None)
