@@ -173,11 +173,11 @@ def plot_max_profit(stockData: dict[str:list], results: list) -> str:
     # -------------------------------------------
     # Prepare Data
     # -------------------------------------------
-    datesData = stockData['Date'][results[0]:results[1]]
-    openData = stockData['Open'][results[0]:results[1]]
-    highData = stockData['High'][results[0]:results[1]]
-    lowData = stockData['Low'][results[0]:results[1]]
-    closeData = stockData['Close/Last'][results[0]:results[1]]
+    datesData = stockData['Date'][results[0]:results[1]+1]
+    openData = stockData['Open'][results[0]:results[1]+1]
+    highData = stockData['High'][results[0]:results[1]+1]
+    lowData = stockData['Low'][results[0]:results[1]+1]
+    closeData = stockData['Close/Last'][results[0]:results[1]+1]
     # -------------------------------------------
     # plot candlestick chart
     # -------------------------------------------
