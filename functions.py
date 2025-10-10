@@ -74,8 +74,8 @@ def trend_finder(stockData: dict [str,list[object]], start_date: datetime, end_d
     # -------------------------------------------
     # Search for valid date in data set (weekend dates do not have data)
     # -------------------------------------------
-    startDate = binary_search(dates, start_date)
-    endDate = binary_search(dates, end_date)
+    startDate = binary_search(dates, start_date, direction = 0)
+    endDate = binary_search(dates, end_date, direction = 1)
     num_weedays_selected = endDate - startDate + 1
     # -------------------------------------------
     # sample days input validation
@@ -154,8 +154,8 @@ def max_profit(stockData, start_date, end_date):
     if (end_date-start_date).days <= 0:
         errorMsg = "Swapped start and end date"
         start_date,end_date = end_date,start_date
-    startDate = binary_search(dates, start_date)
-    endDate = binary_search(dates, end_date)
+    startDate = binary_search(dates, start_date, direction = 0)
+    endDate = binary_search(dates, end_date, direction = 1)
 
     if len(dates) < 2:
         return {
