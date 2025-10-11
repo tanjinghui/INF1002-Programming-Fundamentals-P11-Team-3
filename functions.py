@@ -240,7 +240,7 @@ def binary_search(dates: list[datetime], target: datetime, direction: int) -> in
             start = mid + 1
             
     # -------------------------------------------
-    # 2. If date not found, return the closest date that is after the target
+    # 2. If date not found, return the closest date based on direction
     # -------------------------------------------
     if direction == 0:
         return start if start < len(dates) else len(dates) - 1
@@ -366,7 +366,7 @@ class SegmentTree:
             self.sum_tree[node] = self.sum_tree[2 * node + 1] + self.sum_tree[2 * node + 2]
 
     # -------------------------------------------
-    # 3. Calculate range sum and average using the segment tree
+    # 3. Calculate range sum into average using the segment tree
     # -------------------------------------------
     def range_sum(self, node: int, left: int, right: int, query_left: int, query_right: int) -> int:
         # If query range is outside the node range, return 0

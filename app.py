@@ -94,7 +94,9 @@ def setupTickers(listOfTickers: list[str], start_date: str, end_date: str) -> di
         return None
 
 
-
+# -------------------------------------------
+# Load data from CSV and yfinance for tickers
+# -------------------------------------------
 listOfTickers = ["AAPL" ,"MSFT" ,"GOOG" ,"NVDA" ,"AMZN", "TSLA", "META"]
 csvData = loadData("data/apple.csv")
 stockData = setupTickers(listOfTickers, "2022-01-01", "2025-10-01")
@@ -102,6 +104,9 @@ segmentTrees = {}
 if stockData:
     stockData["LOCAL"] = csvData
     for ticker in listOfTickers + ["LOCAL"]:
+        # -------------------------------------------
+        # Create segment tree for each ticker
+        # -------------------------------------------
         segmentTrees[ticker] = functions.SegmentTree(stockData[ticker]["Close/Last"])
 else:
     print("Something went horribly wrong in loading of data. Abort Abort Abort")
@@ -109,9 +114,15 @@ else:
 
 
 @app.route("/", methods = ["GET"])
+# -------------------------------------------
+# Home page route
+# -------------------------------------------
 def home():
     source = request.args.get("source", "NVDA")
     date_filter = request.args.get("date_filter", "30")
+    # -------------------------------------------
+    # Call visualisation function to draw graph
+    # -------------------------------------------
     if date_filter.lower() != "all":
         try:
             date_filter = int(date_filter)
