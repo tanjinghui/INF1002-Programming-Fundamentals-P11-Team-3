@@ -11263,3 +11263,24 @@ form button {
 form button:hover {
     background: #0056b3;
 }
+
+#window_error {
+    color: red;
+    font-weight: bold;
+    margin-top: 5px;
+    display: none;
+}
+
+#start_error {
+    color: red;
+    font-weight: bold;
+    margin-top: 5px;
+    display: none; 
+}
+
+#end_error {
+    color: red;
+    font-weight: bold;
+    margin-top: 5px;
+    display: none; 
+}

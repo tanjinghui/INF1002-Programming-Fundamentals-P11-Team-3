@@ -57,37 +57,44 @@ function checkValidation() {
     // Invalid date format
     if (startVal && isNaN(start.getTime())) {
         startError.textContent = "Please select a valid start date.";
+        startError.style.display = "block";
         valid = false;
     }
 
     if (endVal && isNaN(end.getTime())) {
         endError.textContent = "Please select a valid end date.";
+        endError.style.display = "block";
         valid = false;
     }
 
     // End date must be after start date
     if (start && end && start > end) {
         endError.textContent = "End date must be after start date.";
+        endError.style.display = "block";
         valid = false;
     }
 
     // Prevent dates beyond today (future dates)
     if (start && start > today) {
         startError.textContent = "Start date cannot be in the future.";
+        startError.style.display = "block";
         valid = false;
     }
 
     if (end && end > today) {
         endError.textContent = "End date cannot be in the future.";
+        endError.style.display = "block";
         valid = false;
     }
     // Validate days window
     if (daysWindow !== null && windowError) {
         if (daysWindow < 1 || isNaN(daysWindow)) {
             windowError.textContent = "Window must be at least 1 day.";
+            windowError.style.display = "block";
             valid = false;
         } else if (start && end && daysWindow > Math.ceil((end - start) / (1000*60*60*24))) {
             windowError.textContent = "Window cannot exceed total days in range (" + Math.ceil((end - start)/(1000*60*60*24)) + ").";
+            windowError.style.display = "block";
             valid = false;
         }
     }
