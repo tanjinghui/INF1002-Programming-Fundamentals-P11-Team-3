@@ -4,8 +4,6 @@
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
         <title>Daily Returns / Stock Analysis</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="static/style.css" rel="stylesheet" />
@@ -50,7 +48,7 @@
                         <h1 class="mt-4">Daily Returns Calculator</h1>
                         <div class="row">
                             <div class="col-xl-3">
-                                <form method="POST" class="form-group">
+                                <form method="POST" class="form-group" onsubmit="return validateForm()">
                                     <h3>Calculate Daily Returns</h3>
                                     <label for="source">Source:</label>
                                     <select class="form-select" list="source" name="source" placeholder="Select Stock Ticker" required>
@@ -65,10 +63,12 @@
                                     </select>
                                     <br>
                                     <label for="start_date">Start Date:</label>
-                                    <input type="date" name="start_date" required>
+                                    <input type="date" id="start_date" name="start_date" min="2021-01-01" max="2025-10-10" required>
+                                    <span class="error" id="start_error"></span>
                                     <br>
                                     <label for="end_date">End Date:</label>
-                                    <input type="date" name="end_date" required>
+                                    <input type="date" id="end_date" name="end_date" min="2021-01-01" max="2025-10-10" required>
+                                    <span class="error" id="end_error"></span>
                                     <br>
                                     <button type="submit">Calculate</button>
                                 </form>
@@ -109,11 +109,6 @@
             </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src="js/scripts.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-        <script src="assets/demo/chart-area-demo.js"></script>
-        <script src="assets/demo/chart-bar-demo.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-        <script src="js/datatables-simple-demo.js"></script>
+        <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
     </body>
 </html>
