@@ -64,13 +64,16 @@
                                     </select>
                                     <br>
                                     <label for="start_date">Start Date:</label>
-                                    <input type="date" name="start_date" id="start_date" required>
+                                    <input type="date" id="start_date" name="start_date" min="2021-01-01" max="2025-10-10" required>
+                                    <span class="error" id="start_error"></span>
                                     <br>
                                     <label for="end_date">End Date:</label>
-                                    <input type="date" name="end_date" id="end_date" required>
+                                    <input type="date" id="end_date" name="end_date" min="2021-01-01" max="2025-10-10" required>
+                                    <span class="error" id="end_error"></span>
                                     <br>
                                     <label for="trend_window">Trend Window (days):</label>
                                     <input type="number" name="trend_window" id="trend_window" min="1" required>
+                                    <span class="error" id="window_error"></span>
                                     <br>
                                     <button type="submit" id="update-button">Calculate</button>
                                 </form>
