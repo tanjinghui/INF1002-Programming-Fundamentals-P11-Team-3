@@ -41,15 +41,18 @@ function checkValidation() {
     const startInput = document.getElementById("start_date");
     const endInput = document.getElementById("end_date");
     const windowInput = document.getElementById("days_window");
+    const trendWindowInput = document.getElementById("trend_window");
 
     const startVal = startInput?.value || null;
     const endVal = endInput?.value || null;
     const windowVal = windowInput?.value || null;
+    const trendWindowVal = trendWindowInput?.value || null;
 
     // Validate days window
     const start = startVal ? new Date(startVal) : null;
     const end = endVal ? new Date(endVal) : null;
     const daysWindow = windowVal ? parseInt(windowVal) : null;
+    const trendWindow = trendWindowVal ? parseInt(trendWindowVal) : null;
 
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set to start of day
@@ -99,6 +102,19 @@ function checkValidation() {
         }
     }
 
+    // Validate trend window
+    if (trendWindow !== null && windowError) {
+        if (trendWindow < 1 || isNaN(trendWindow)) {
+            windowError.textContent = "Window must be at least 1 day.";
+            windowError.style.display = "block";
+            valid = false;
+        } else if (start && end && trendWindow > Math.ceil((end - start) / (1000*60*60*24))) {
+            windowError.textContent = "Window cannot exceed total days in range (" + Math.ceil((end - start)/(1000*60*60*24)) + ").";
+            windowError.style.display = "block";
+            valid = false;
+        }
+    }
+
     // Prevent dates that are too big (e.g., year 9999)
     const maxAllowedYear = 2025;
     if (start && start.getFullYear() > maxAllowedYear) {
@@ -115,7 +131,7 @@ function checkValidation() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    ["start_date", "end_date", "days_window"].forEach(id => {
+    ["start_date", "end_date", "days_window", "trend_window"].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener("input", checkValidation);
     });
